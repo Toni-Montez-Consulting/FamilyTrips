@@ -5,7 +5,7 @@ import {
   runTripOverrideAction,
   type TripOverrideStore,
 } from '../src/server/tripOverrideActions.js'
-import type { TripOverrideHistoryRow, TripOverrideRow } from '../src/utils/tripOverrides.js'
+import { TRIP_OVERRIDE_SELECT, type TripOverrideHistoryRow, type TripOverrideRow } from '../src/utils/tripOverrides.js'
 
 type JsonRequest = IncomingMessage & {
   body?: unknown
@@ -47,7 +47,7 @@ function createStore(url: string, serviceRoleKey: string): TripOverrideStore {
     async getCurrent(tripSlug) {
       const { data, error } = await admin
         .from('trip_overrides')
-        .select('trip_slug,data,version,updated_at,updated_by')
+        .select(TRIP_OVERRIDE_SELECT)
         .eq('trip_slug', tripSlug)
         .maybeSingle()
       if (error) throw error
@@ -60,7 +60,15 @@ function createStore(url: string, serviceRoleKey: string): TripOverrideStore {
       if (error) throw error
     },
     async insertHistory(row) {
-      const { error } = await admin.from('trip_override_history').insert(row)
+      const historyRow = {
+        trip_slug: row.trip_slug,
+        data: row.data,
+        version: row.version,
+        updated_at: row.updated_at,
+        updated_by: row.updated_by,
+        restored_from_version: row.restored_from_version,
+      }
+      const { error } = await admin.from('trip_override_history').insert(historyRow)
       if (error) throw error
     },
     async getHistory(tripSlug) {
@@ -104,6 +112,7 @@ export default async function handler(req: JsonRequest, res: ServerResponse) {
     const body = await readBody(req)
     const result = await runTripOverrideAction(body, createStore(supabaseUrl, serviceRoleKey), {
       adminPin: process.env.ADMIN_PIN,
+      editorPin: process.env.TRIP_EDITOR_PIN,
       pinMatches,
     })
     json(res, result.status, result.body)
