@@ -7,9 +7,12 @@ export type AddItemInput = {
   notes?: string | null
 }
 
+export type ChecklistItemsSyncStatus = 'loading' | 'online' | 'offline' | 'error'
+
 type UseChecklistItemsResult = {
   items: ChecklistItemRow[]
   syncEnabled: boolean
+  syncStatus: ChecklistItemsSyncStatus
   addItem: (input: AddItemInput) => Promise<ChecklistItemRow | null>
   updateItem: (id: string, patch: Partial<AddItemInput>) => Promise<void>
   deleteItem: (id: string) => Promise<void>
@@ -77,12 +80,16 @@ export function useChecklistItems(
     tripSlug,
     items: isSupabaseConfigured ? [] : readLocalItems(tripSlug),
   }))
+  const [syncStatus, setSyncStatus] = useState<ChecklistItemsSyncStatus>(
+    isSupabaseConfigured ? 'loading' : 'offline',
+  )
   const items = itemState.tripSlug === tripSlug ? itemState.items : EMPTY_ITEMS
 
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
       const timeout = window.setTimeout(() => {
         setItemState({ tripSlug, items: readLocalItems(tripSlug) })
+        setSyncStatus('offline')
       }, 0)
       return () => window.clearTimeout(timeout)
     }
@@ -127,8 +134,15 @@ export function useChecklistItems(
       .eq('trip_slug', tripSlug)
       .order('created_at', { ascending: true })
       .then(({ data, error }) => {
-        if (cancelled || error) return
+        if (cancelled) return
+        if (error) {
+          // Don't silently swallow: surface a sync error and log for diagnostics.
+          console.warn(`[checklist-items] failed to load items for ${tripSlug}:`, error.message)
+          setSyncStatus('error')
+          return
+        }
         setItemState({ tripSlug, items: (data ?? []) as ChecklistItemRow[] })
+        setSyncStatus('online')
       })
 
     return () => {
@@ -160,7 +174,11 @@ export function useChecklistItems(
         })
         .select()
         .single()
-      if (error) return null
+      if (error) {
+        console.warn(`[checklist-items] failed to add item for ${tripSlug}:`, error.message)
+        setSyncStatus('error')
+        return null
+      }
       return data as ChecklistItemRow
     },
     [tripSlug, actorId],
@@ -182,7 +200,11 @@ export function useChecklistItems(
         })
         return
       }
-      await supabase.from('checklist_items').update(update).eq('id', id)
+      const { error } = await supabase.from('checklist_items').update(update).eq('id', id)
+      if (error) {
+        console.warn(`[checklist-items] failed to update item ${id}:`, error.message)
+        setSyncStatus('error')
+      }
     },
     [tripSlug],
   )
@@ -197,8 +219,12 @@ export function useChecklistItems(
       })
       return
     }
-    await supabase.from('checklist_items').delete().eq('id', id)
+    const { error } = await supabase.from('checklist_items').delete().eq('id', id)
+    if (error) {
+      console.warn(`[checklist-items] failed to delete item ${id}:`, error.message)
+      setSyncStatus('error')
+    }
   }, [tripSlug])
 
-  return { items, syncEnabled: isSupabaseConfigured, addItem, updateItem, deleteItem }
+  return { items, syncEnabled: isSupabaseConfigured, syncStatus, addItem, updateItem, deleteItem }
 }

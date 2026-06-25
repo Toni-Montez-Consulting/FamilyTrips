@@ -4,6 +4,7 @@ import CopyButton from '../components/CopyButton'
 import Section from '../components/Section'
 import { getTrip } from '../data/trips'
 import { useTrip } from '../context/tripContextCore'
+import { useTripWithOverride } from '../hooks/useTripOverrides'
 import type {
   Activity,
   Booking,
@@ -26,6 +27,7 @@ import type {
 } from '../types/trip'
 import { formatTimeAgo } from '../utils/formatters'
 import { dateRangeError, isDateWithinRange, isIsoDate, isValidDateRange } from '../utils/dateValidation'
+import { assessDayPace, makeOpenBlock } from '../utils/dayPace'
 import {
   cloneTrip,
   editableFieldsFromTrip,
@@ -1268,6 +1270,7 @@ function TripCommandPanel({
   saveState: SaveState
 }) {
   const isEvent = trip.kind === 'event'
+  const [dismissedPace, setDismissedPace] = useState<Set<string>>(new Set())
   const planner = trip.planner
   const sourceRefs = trip.planner?.sourceRefs ?? []
   const recommendations = trip.planner?.recommendations ?? []
@@ -1429,6 +1432,33 @@ function TripCommandPanel({
                 </div>
               ))}
             </div>
+            {!isEvent && onPatchTrip && assessDayPace(day).overPacked && !dismissedPace.has(day.date) && (
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+                <span>This day looks full. Want to keep an afternoon open?</span>
+                <span className="flex gap-2">
+                  <button
+                    type="button"
+                    className="rounded-full border border-blue-300 bg-white px-3 py-1.5 text-sm font-semibold text-blue-800"
+                    onClick={() =>
+                      onPatchTrip({
+                        itinerary: trip.itinerary.map((d) =>
+                          d.date === day.date ? { ...d, items: [...d.items, makeOpenBlock(trip.kind)] } : d,
+                        ),
+                      })
+                    }
+                  >
+                    Keep it open
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full px-3 py-1.5 text-sm font-medium text-blue-700"
+                    onClick={() => setDismissedPace((prev) => new Set(prev).add(day.date))}
+                  >
+                    Dismiss
+                  </button>
+                </span>
+              </div>
+            )}
           </article>
         ))}
       </section>
@@ -1732,9 +1762,10 @@ export default function ManageTrip() {
   const effectiveTrip = useTrip()
   const [searchParams] = useSearchParams()
   const seedTrip = useMemo(() => getTrip(effectiveTrip.slug) ?? effectiveTrip, [effectiveTrip])
+  const { row: overrideRow, status: overrideStatus } = useTripWithOverride(seedTrip)
   const [draft, setDraft] = useState<Trip>(() => cloneTrip(effectiveTrip))
   const [dirty, setDirty] = useState(false)
-  const [pin, setPin] = useState(() => window.sessionStorage.getItem('familytrips:owner-pin') ?? '')
+  const [pin, setPin] = useState('')
   const [history, setHistory] = useState<TripOverrideHistoryRow[]>([])
   const [saveState, setSaveState] = useState<SaveState>('idle')
   const [message, setMessage] = useState<string | null>(null)
@@ -1744,6 +1775,9 @@ export default function ManageTrip() {
   const [assistPreview, setAssistPreview] = useState<SmartAssistPreview | null>(null)
   const [selectedAssistSections, setSelectedAssistSections] = useState<SmartAssistSectionId[]>([])
   const [activePanel, setActivePanel] = useState<CommandPanel>('overview')
+  // Version the draft was loaded from, for optimistic-concurrency on save. Undefined
+  // until we have an authoritative read so an offline client never sends a bogus base.
+  const [baseVersion, setBaseVersion] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -1752,9 +1786,20 @@ export default function ManageTrip() {
     return () => window.clearTimeout(timeout)
   }, [dirty, effectiveTrip])
 
+  // Freeze the base version while the user has unsaved edits; resync once the live
+  // override row is read online and the draft is clean again. Deferred through a
+  // timeout to keep the state update out of the effect body (matches draft-sync above).
   useEffect(() => {
-    if (pin.trim()) window.sessionStorage.setItem('familytrips:owner-pin', pin.trim())
-  }, [pin])
+    if (dirty || overrideStatus !== 'online') return
+    const timeout = window.setTimeout(() => setBaseVersion(overrideRow?.version ?? 0), 0)
+    return () => window.clearTimeout(timeout)
+  }, [dirty, overrideRow, overrideStatus])
+
+  // PIN lives in memory only — never persisted to web storage (XSS hardening). Clear any
+  // value a prior build may have left in sessionStorage on this device.
+  useEffect(() => {
+    window.sessionStorage.removeItem('familytrips:owner-pin')
+  }, [])
 
   const validationErrors = useMemo(
     () => validateEditableTrip(seedTrip, editableFieldsFromTrip(draft)).map(({ path, message }) => ({ path, message })),
@@ -1790,6 +1835,7 @@ export default function ManageTrip() {
       setDraft(cloneTrip(result.mergedTrip))
       setDirty(false)
     }
+    if (result.row) setBaseVersion(result.row.version)
     window.dispatchEvent(new CustomEvent('familytrips:trip-overrides-changed', { detail: { tripSlug: draft.slug } }))
   }
 
@@ -1825,6 +1871,7 @@ export default function ManageTrip() {
       pin,
       data: editableFieldsFromTrip(draft),
       updatedBy: 'owner',
+      baseVersion,
     })
 
     if (!result.ok) {
@@ -1996,6 +2043,7 @@ export default function ManageTrip() {
       pin,
       data: selectedData,
       updatedBy: 'Smart Assist',
+      baseVersion,
     })
     if (!result.ok) {
       setSaveState('error')

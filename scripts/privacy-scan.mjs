@@ -12,6 +12,11 @@ const exactAddressPattern = /\b\d{2,6}\s+[A-Z][A-Za-z0-9'’.-]*(?:\s+[A-Z0-9][A
 const phonePattern = /(?:\+?1[\s.-]*)?(?:\(\d{3}\)|\d{3})[\s.-]*\d{3}[\s.-]*\d{4}\b/
 const confirmationPattern = /\b(?:RES-\d{3,}|HMM[A-Z0-9]{5,}|C\d{8,}|(?:Costco|Enterprise|Airbnb|rental|reservation|booking|confirmation|record locator)[^'"\n]{0,80}\b(?=[A-Z0-9-]*\d)[A-Z0-9-]{5,})\b/i
 const accessPattern = /\b(?:password|passcode|door code|gate code|alarm code|access code|entry code|entry codes|key instructions|key\s*:|key\s+is|outlet box|behind (?:the )?vase|wifi password)\b/i
+const bedPlanPhrasePattern = /\b(?:bed\s*plan|sleeping\s+arrangements?|who\s+sleeps\s+where|rooming(?:\s+plan)?)\b/i
+// Title-case room label, a dash/colon, then a capitalized person name (how seed data writes
+// rooming plans, e.g. "Bedroom 2 — Leah" or "Master — Toni"). Case-sensitive on the labels so
+// it keys on real assignments rather than incidental "bedroom" mentions in lowercase prose.
+const roomAssignmentPattern = /\b(?:Master(?:\s+(?:Bedroom|Suite))?|Bedrooms?\s*\d*|Bunk(?:\s*Room)?|Guest\s+Room|Primary\s+Suite|Room\s*\d+)\s*[—:–-]\s*[A-Z][a-z]+/
 
 const publicAddressAllowlist = [
   /901\s+N\s+Broadway\s+Ave/i,
@@ -99,6 +104,15 @@ export function scanText(text, file = '<inline>') {
       })
     }
 
+    if (bedPlanPhrasePattern.test(trimmed) || roomAssignmentPattern.test(trimmed)) {
+      findings.push({
+        file,
+        line: index + 1,
+        rule: 'rooming',
+        message: 'Bed/room assignment names who sleeps where; keep rooming plans private.',
+      })
+    }
+
     if (exactAddressPattern.test(trimmed) && !isPublicAddress(trimmed)) {
       findings.push({
         file,
@@ -133,6 +147,16 @@ function runSelfTests() {
       name: 'private address',
       text: "address: '1127 Northwest 56th Street, Oklahoma City, OK 73118'",
       rule: 'private-address',
+    },
+    {
+      name: 'bed plan header',
+      text: "notes: 'Draft bed plan (swap freely):'",
+      rule: 'rooming',
+    },
+    {
+      name: 'room assignment',
+      text: "notes: 'Bedroom 2 — Leah + Tony'",
+      rule: 'rooming',
     },
   ]
 

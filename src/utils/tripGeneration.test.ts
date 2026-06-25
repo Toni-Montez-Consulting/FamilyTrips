@@ -148,6 +148,20 @@ describe('smart trip generation', () => {
     expect(trip.itinerary[1].items.length).toBeGreaterThan(trip.itinerary[0].items.length)
   })
 
+  it('defaults middle days to one anchor plus a protected open block', () => {
+    const generated = buildDeterministicTrip(leBlancBrief())
+    const trip = generated.trip
+    const middleDays = trip.itinerary.slice(1, -1)
+
+    expect(middleDays.length).toBeGreaterThan(0)
+    for (const day of middleDays) {
+      expect(day.items.filter((item) => item.anchor === true)).toHaveLength(1)
+      expect(day.items.some((item) => item.open === true)).toBe(true)
+    }
+    expect(trip.itinerary[0].items.some((item) => item.open === true)).toBe(false)
+    expect(trip.itinerary[trip.itinerary.length - 1].items.some((item) => item.open === true)).toBe(false)
+  })
+
   it('does not claim exact distance, travel time, prices, hours, or availability in generated planning language', () => {
     const generated = buildDeterministicTrip(leBlancBrief())
     const trip = generated.trip
