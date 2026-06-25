@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const Home = lazy(() => import('./pages/Home'))
 const Trip = lazy(() => import('./pages/Trip'))
@@ -25,8 +26,9 @@ function RouteFallback() {
 export default function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<RouteFallback />}>
-        <Routes>
+      <ErrorBoundary>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
           <Route path="/" element={<TripsIndex />} />
           <Route path="/trips/new" element={<NewTrip />} />
           <Route path="/mothers-day-2026" element={<MothersDay2026 />} />
@@ -41,8 +43,9 @@ export default function App() {
             <Route path="manage" element={<ManageTrip />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }
