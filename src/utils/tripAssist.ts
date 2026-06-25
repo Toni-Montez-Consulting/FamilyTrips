@@ -1,5 +1,6 @@
 import type { Trip } from '../types/trip'
 import { makeStableIdFromLabel, editableFieldsFromTrip, type TripOverrideData } from './tripOverrides.js'
+import { makeOpenBlock } from './dayPace.js'
 
 export type SmartAssistAction =
   | 'fill-missing'
@@ -513,15 +514,9 @@ export function generateSmartAssistPreview(trip: Trip, action: SmartAssistAction
         })
         summary.push(`Added starter item for ${day.date}.`)
       }
-      if (action === 'looser-day' && !day.items.some((item) => /buffer|downtime|reset/i.test(item.title))) {
-        day.items.splice(Math.min(day.items.length, 2), 0, {
-          time: next.kind === 'event' ? 'Buffer' : 'Late afternoon',
-          title: next.kind === 'event' ? 'Host buffer and reset' : 'Open buffer / reset',
-          notes: 'Keep this block flexible so the day does not become overpacked.',
-          status: 'suggested',
-          why: 'Smart Assist loosened the day.',
-        })
-        summary.push(`Added buffer block to ${day.date}.`)
+      if (action === 'looser-day' && !day.items.some((item) => item.open === true || /buffer|downtime|reset/i.test(item.title))) {
+        day.items.splice(Math.min(day.items.length, 2), 0, makeOpenBlock(next.kind))
+        summary.push(`Added open time to ${day.date}.`)
       }
       if (action === 'tighter-day' && day.items.length < 3) {
         day.items.push({

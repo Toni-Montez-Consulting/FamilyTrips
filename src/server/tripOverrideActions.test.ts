@@ -430,4 +430,112 @@ describe('trip override API action handler', () => {
     expect(state.current?.data.name).toBe('Restored OKC')
     expect(state.history[0].restored_from_version).toBe(1)
   })
+
+  function dynamicCurrentAtVersion(version: number): TripOverrideRow {
+    return {
+      trip_slug: 'logan-morgan-honeymoon',
+      data: {
+        ...editableFieldsFromTrip(okc),
+        name: 'Logan + Morgan Honeymoon',
+        location: 'Los Cabos, Mexico',
+        visibility: 'unlisted',
+      },
+      version,
+      updated_at: '2026-01-01T00:00:00.000Z',
+      updated_by: 'creator',
+      source: 'dynamic',
+      visibility: 'unlisted',
+      created_at: '2026-01-01T00:00:00.000Z',
+      created_by: 'Codex UAT',
+    }
+  }
+
+  it('rejects a save when the editor base version is stale (optimistic concurrency)', async () => {
+    const state = createStore([], dynamicCurrentAtVersion(2))
+    const result = await runTripOverrideAction(
+      {
+        action: 'save',
+        tripSlug: 'logan-morgan-honeymoon',
+        pin: 'editor',
+        baseVersion: 1,
+        data: { ...dynamicCurrentAtVersion(2).data, name: 'Stale clobbering edit' },
+      },
+      state.store,
+      { adminPin: 'admin', editorPin: 'editor' },
+    )
+
+    expect(result.status).toBe(409)
+    expect(state.current?.version).toBe(2)
+    expect(state.current?.data.name).not.toBe('Stale clobbering edit')
+  })
+
+  it('allows a save when the editor base version matches the current version', async () => {
+    const state = createStore([], dynamicCurrentAtVersion(2))
+    const result = await runTripOverrideAction(
+      {
+        action: 'save',
+        tripSlug: 'logan-morgan-honeymoon',
+        pin: 'editor',
+        baseVersion: 2,
+        data: { ...dynamicCurrentAtVersion(2).data, name: 'Fresh edit on latest' },
+      },
+      state.store,
+      { adminPin: 'admin', editorPin: 'editor' },
+    )
+
+    expect(result.status).toBe(200)
+    expect(state.current?.version).toBe(3)
+    expect(state.current?.data.name).toBe('Fresh edit on latest')
+  })
+
+  it('still saves when no base version is supplied (backward compatible)', async () => {
+    const state = createStore([], dynamicCurrentAtVersion(2))
+    const result = await runTripOverrideAction(
+      {
+        action: 'save',
+        tripSlug: 'logan-morgan-honeymoon',
+        pin: 'editor',
+        data: { ...dynamicCurrentAtVersion(2).data, name: 'Legacy client edit' },
+      },
+      state.store,
+      { adminPin: 'admin', editorPin: 'editor' },
+    )
+
+    expect(result.status).toBe(200)
+    expect(state.current?.version).toBe(3)
+  })
+
+  it('looser-day Smart Assist adds a protected open block', async () => {
+    const dynamicCurrent: TripOverrideRow = {
+      trip_slug: 'logan-morgan-honeymoon',
+      data: {
+        ...editableFieldsFromTrip(okc),
+        name: 'Logan + Morgan Honeymoon',
+        visibility: 'unlisted',
+        itinerary: [
+          { date: okc.startDate, title: 'Day one', items: [{ title: 'Thing one' }, { title: 'Thing two' }] },
+        ],
+      },
+      version: 1,
+      updated_at: '2026-01-01T00:00:00.000Z',
+      updated_by: 'creator',
+      source: 'dynamic',
+      visibility: 'unlisted',
+      created_at: '2026-01-01T00:00:00.000Z',
+      created_by: 'Logan',
+    }
+    const state = createStore([], dynamicCurrent)
+    const result = await runTripOverrideAction(
+      { action: 'assistPreview', tripSlug: 'logan-morgan-honeymoon', pin: 'editor', assistAction: 'looser-day' },
+      state.store,
+      { adminPin: 'admin', editorPin: 'editor' },
+    )
+
+    expect(result.status).toBe(200)
+    if (result.body.ok && 'assist' in result.body) {
+      expect(
+        result.body.assist.mergedTrip.itinerary.some((d) => d.items.some((i) => i.open === true)),
+      ).toBe(true)
+    }
+  })
 })

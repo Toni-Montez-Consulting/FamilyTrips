@@ -15,6 +15,7 @@ type SaveBody = {
   pin: string
   data: unknown
   updatedBy?: unknown
+  baseVersion?: number
 }
 
 type RestoreBody = {
@@ -79,6 +80,10 @@ function asPositiveInteger(value: unknown): number | null {
   return typeof value === 'number' && Number.isInteger(value) && value > 0 ? value : null
 }
 
+function asOptionalNonNegativeInteger(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : undefined
+}
+
 function requestError(status: number, error: string): TripOverrideActionResult {
   return { status, body: { ok: false, error } }
 }
@@ -97,6 +102,7 @@ function parseBody(body: unknown): TripOverrideRequestBody | null {
       pin,
       data: body.data,
       updatedBy: body.updatedBy,
+      baseVersion: asOptionalNonNegativeInteger(body.baseVersion),
     }
   }
 
@@ -268,6 +274,16 @@ export async function runTripOverrideAction(
         mergedTrip: applyTripOverride(baseTrip, row.data),
       },
     }
+  }
+
+  // Optimistic concurrency: if the editor sent the version they started from and
+  // the live trip has moved on (a concurrent save from another household/editor),
+  // refuse rather than silently clobbering the newer edit. Fail-Loud, not last-write-wins.
+  if (body.baseVersion !== undefined && (current?.version ?? 0) !== body.baseVersion) {
+    return requestError(
+      409,
+      'This trip changed since you started editing. Reload to get the latest version, then reapply your change.',
+    )
   }
 
   const data = normalizeTripOverrideData(body.data)

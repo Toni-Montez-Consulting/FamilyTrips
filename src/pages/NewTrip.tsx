@@ -209,7 +209,7 @@ export default function NewTrip() {
   const today = todayLocalISO()
   const [mode, setMode] = useState<CreateMode>('smart')
   const [step, setStep] = useState<WizardStep>('start')
-  const [pin, setPin] = useState(() => window.sessionStorage.getItem('familytrips:owner-pin') ?? '')
+  const [pin, setPin] = useState('')
   const [planType, setPlanType] = useState<PlanType>('trip')
   const [eventSubtype, setEventSubtype] = useState<EventSubtype>('gathering')
   const [destination, setDestination] = useState('')
@@ -406,7 +406,6 @@ export default function NewTrip() {
       return
     }
     if (hasTrip(result)) {
-      window.sessionStorage.setItem('familytrips:owner-pin', pin.trim())
       window.dispatchEvent(new CustomEvent('familytrips:trip-overrides-changed', { detail: { tripSlug: result.trip.slug } }))
       navigate(`/${result.trip.slug}/manage`)
     }
@@ -421,7 +420,6 @@ export default function NewTrip() {
       return
     }
     if (hasTrip(result)) {
-      window.sessionStorage.setItem('familytrips:owner-pin', pin.trim())
       window.dispatchEvent(new CustomEvent('familytrips:trip-overrides-changed', { detail: { tripSlug: result.trip.slug } }))
       navigate(`/${result.trip.slug}/manage?created=1&draft=generated`)
     }

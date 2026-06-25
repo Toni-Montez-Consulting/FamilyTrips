@@ -1374,9 +1374,12 @@ function makeItinerary(
       })
     }
 
+    let anchorTagged = false
     for (const mustDo of assignedMustDos) {
       const miniPlan = miniPlanMap.get(mustDo.title.toLowerCase())
       const candidate = miniPlan?.candidateId ? recommendations.find((item) => item.id === miniPlan.candidateId) : undefined
+      const isAnchor = !isFirst && !isLast && !anchorTagged
+      if (isAnchor) anchorTagged = true
       items.push({
         time: isFirst || isLast ? miniPlan?.recommendedTimeWindow : miniPlan?.recommendedTimeWindow ?? 'Afternoon',
         title: candidate && candidate.name.toLowerCase() !== mustDo.title.toLowerCase()
@@ -1392,16 +1395,23 @@ function makeItinerary(
         why: miniPlan?.why ?? mustDo.why ?? (mustDo.required ? 'Required must-do from the brief.' : 'Optional idea from the brief.'),
         nextStep: miniPlan?.nextStep ?? (mustDo.bookingStatus === 'confirmed' ? 'Add exact time and confirmation details.' : 'Confirm provider, time, cost, transportation, and cancellation rules.'),
         sourceIds: miniPlan?.sourceIds,
+        anchor: isAnchor || undefined,
       })
+    }
+
+    // No must-do today? The morning becomes the day's anchor (one anchor a day).
+    if (!isFirst && !isLast && !anchorTagged && items.length > 0) {
+      items[0].anchor = true
     }
 
     if (!isFirst && !isLast) {
       items.push({
         time: 'Late afternoon',
         title: pool?.name ?? 'Pool, beach, or room reset',
-        notes: pool?.notes ?? 'Leave open space before dinner.',
+        notes: pool?.notes ?? 'Leave open space before dinner. Keep it unhurried — downtime is what recharges you.',
         status: 'suggested',
-        why: 'This keeps the day from becoming a checklist.',
+        why: 'Plan the day, not the hour — protect open space.',
+        open: true,
       })
       items.push({
         time: 'Dinner',

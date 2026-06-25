@@ -29,11 +29,7 @@ export const stpete: Trip = {
     ],
     notes:
       '5 nights · Check-in 4:00 PM Sept 3 · Check-out 10:00 AM Sept 8.\n\n' +
-      'Draft bed plan (swap freely):\n' +
-      '• Master — Toni + Morgan + Tatum (pack & play)\n' +
-      '• Bedroom 2 — Leah + Tony (Montez)\n' +
-      '• Bedroom 3 — Laura + Mark (Goodwin)\n' +
-      '• Bedroom 4 — Mikayla + Courtney (tentative)\n\n' +
+      'Room and bed assignments are shared privately with the group (kept out of the public site).\n\n' +
       '🚗 Parking plan (exactly the 2 cars allowed):\n' +
       '1. Rental — Toni, Morgan, Tatum, Leah, Tony (picked up at TPA; large SUV may not fully fit inside the garage, but can still park there)\n' +
       '2. Mark & Laura’s car (driving from Cullman, AL)\n' +

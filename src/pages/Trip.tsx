@@ -76,11 +76,22 @@ export default function Trip() {
               </header>
               <ul className="divide-y divide-slate-100">
                 {day.items.map((item, i) => (
-                  <li key={i} className="px-4 py-3 flex gap-4">
+                  <li key={i} className={`px-4 py-3 flex gap-4 ${item.open ? 'bg-slate-50' : ''}`}>
                     {item.time && <span className="text-slate-500 font-mono text-sm w-20 shrink-0">{item.time}</span>}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-slate-900">{item.title}</p>
-                      <StatusPill value={item.status} />
+                      <p className="font-medium text-slate-900">
+                        {item.anchor && (
+                          <span className="mr-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800 align-middle">
+                            Anchor
+                          </span>
+                        )}
+                        {item.title}
+                      </p>
+                      {item.open ? (
+                        <p className="text-sm text-slate-600 mt-1">Kept open on purpose — leave room to breathe.</p>
+                      ) : (
+                        <StatusPill value={item.status} />
+                      )}
                       {item.address && (
                         <a
                           href={mapsLink(item.address)}

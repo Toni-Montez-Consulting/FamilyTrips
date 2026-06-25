@@ -138,6 +138,8 @@ export type ItineraryItem = PlannerAnnotated & {
   notes?: string
   address?: string
   link?: string
+  anchor?: boolean
+  open?: boolean
 }
 
 export type Day = {
