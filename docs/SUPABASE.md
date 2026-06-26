@@ -204,6 +204,58 @@ to anon
 using (true);
 ```
 
+## Phase 1 additions — tenancy backbone (2026-06-26)
+
+Applied to prod via migrations `base_trip_overrides_schema` (repaired the missing `trip_overrides` migration record) and `p1_tenancy_backbone`, branch-tested first. **Additive only** — the operational join key stays `trip_slug` (no PK swap). New tables are **server-only** (RLS enabled, no anon policy) until P2 defines token-scoped access. The permission role on `trip_members` (`owner`/`editor`/`household-lead`/`viewer`) is distinct from `Person.role`, which is a display label ("Wife", "Dad").
+
+```sql
+-- Stable UUID identity (slug stays the operational key) + schema version + soft-delete
+alter table public.trip_overrides add column if not exists trip_id uuid not null default gen_random_uuid();
+create unique index if not exists trip_overrides_trip_id_idx on public.trip_overrides (trip_id);
+alter table public.trip_overrides add column if not exists schema_version integer not null default 1;
+alter table public.trip_overrides  add column if not exists deleted_at timestamptz null;
+alter table public.checklist_items add column if not exists deleted_at timestamptz null;
+alter table public.checklist_state add column if not exists deleted_at timestamptz null;
+
+create table if not exists public.households (
+  id uuid primary key default gen_random_uuid(),
+  trip_slug text not null,
+  name text not null,
+  primary_contact_person_id text null,
+  notes text null,
+  created_at timestamptz not null default now()
+);
+create index if not exists households_trip_idx on public.households (trip_slug);
+
+create table if not exists public.trip_members (
+  id uuid primary key default gen_random_uuid(),
+  trip_slug text not null,
+  person_id text not null,
+  household_id uuid null references public.households(id) on delete set null,
+  role text not null default 'viewer' check (role in ('owner','editor','household-lead','viewer')),
+  created_at timestamptz not null default now(),
+  unique (trip_slug, person_id)
+);
+create index if not exists trip_members_trip_idx on public.trip_members (trip_slug);
+
+create table if not exists public.audit_log (
+  id uuid primary key default gen_random_uuid(),
+  trip_slug text not null,
+  person_id text null,
+  actor text null,
+  action text not null,
+  target text null,
+  before_summary text null,
+  after_summary text null,
+  created_at timestamptz not null default now()
+);
+create index if not exists audit_log_trip_idx on public.audit_log (trip_slug, created_at desc);
+
+alter table public.households   enable row level security;
+alter table public.trip_members enable row level security;
+alter table public.audit_log    enable row level security;
+```
+
 ## State Conventions
 
 - Code-defined checklist items use their checklist item ID directly in `checklist_state.item_id`.

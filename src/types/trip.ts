@@ -157,6 +157,17 @@ export type Activity = PlannerAnnotated & {
   notes?: string
 }
 
+// A roster grouping within a trip (e.g. a couple + kids travelling together).
+// Lives in the `households` table; referenced from Person via household_id.
+export type Household = {
+  id: string
+  name: string
+  primaryContactPersonId?: string
+  notes?: string
+}
+
+// Permission role lives on trip_members (owner/editor/household-lead/viewer),
+// NOT here. Person.role stays a free-text display label ("Wife", "Dad").
 export type Person = {
   id: string
   name: string
@@ -164,6 +175,7 @@ export type Person = {
   phone?: string
   arriving?: string
   leaving?: string
+  household_id?: string
 }
 
 export type ContactKind = 'phone' | 'url' | 'text'
