@@ -25,7 +25,7 @@ export const myrtleBeach: Trip = {
     amenities: ['6 bedrooms — fits the full group', 'No pets', 'No smoking'],
     notes:
       'Managed by MB Vacation Home Rentals · check-in window 4:00–8:30 PM.\n\n' +
-      'The property guidebook (door code, Wi-Fi password, parking passes, checkout steps) is ' +
+      'Entry, internet, parking, and checkout details live in the property guidebook, ' +
       'shared privately with the group — kept off this public page on purpose. ' +
       'Flight reservation confirmation is also stored privately.',
   },
