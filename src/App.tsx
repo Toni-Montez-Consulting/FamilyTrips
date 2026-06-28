@@ -13,6 +13,7 @@ const Packing = lazy(() => import('./pages/Packing'))
 const ManageTrip = lazy(() => import('./pages/ManageTrip'))
 const NewTrip = lazy(() => import('./pages/NewTrip'))
 const TripsIndex = lazy(() => import('./pages/TripsIndex'))
+const Landing = lazy(() => import('./pages/Landing'))
 const MothersDay2026 = lazy(() => import('./pages/MothersDay2026'))
 
 function RouteFallback() {
@@ -29,7 +30,8 @@ export default function App() {
       <ErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
-          <Route path="/" element={<TripsIndex />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/trips" element={<TripsIndex />} />
           <Route path="/trips/new" element={<NewTrip />} />
           <Route path="/mothers-day-2026" element={<MothersDay2026 />} />
           <Route path="/:tripSlug" element={<Layout />}>
