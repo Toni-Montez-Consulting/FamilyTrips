@@ -18,16 +18,16 @@ export const myrtleBeach: Trip = {
   tagline: 'Toddler-mode beach long weekend with Tatum',
 
   stay: {
-    name: 'Airbnb — Myrtle Beach (details pending)',
-    address: 'Shared privately with the group · exact address pending',
-    checkIn: 'July 4, 2026 · time TBD',
-    checkOut: 'July 7, 2026 · time TBD',
-    amenities: [],
+    name: 'Myrtle Beach Villas 302 A (6-bedroom condo)',
+    address: 'Shared privately with the group',
+    checkIn: 'July 4, 2026 · 4:00 PM–8:30 PM',
+    checkOut: 'July 7, 2026 · time per guidebook',
+    amenities: ['6 bedrooms — fits the full group', 'No pets', 'No smoking'],
     notes:
-      'AIRBNB DETAILS NOT YET PROVIDED. Update this stay block once confirmed: ' +
-      'listing name, exact address (keep private — group chat only), check-in/out times, ' +
-      'Wi-Fi, host contact, crib/pack-and-play availability, parking, and total cost.\n\n' +
-      'Reservation confirmation for flights is stored privately (not in this public planner).',
+      'Managed by MB Vacation Home Rentals · check-in window 4:00–8:30 PM.\n\n' +
+      'The property guidebook (door code, Wi-Fi password, parking passes, checkout steps) is ' +
+      'shared privately with the group — kept off this public page on purpose. ' +
+      'Flight reservation confirmation is also stored privately.',
   },
 
   bookings: [
