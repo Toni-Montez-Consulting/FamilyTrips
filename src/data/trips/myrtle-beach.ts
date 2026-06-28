@@ -12,7 +12,7 @@ export const myrtleBeach: Trip = {
   location: 'Myrtle Beach, SC',
   startDate: '2026-07-04',
   endDate: '2026-07-07',
-  visibility: 'unlisted',
+  visibility: 'listed',
   heroImage,
   currency: '$',
   tagline: 'Toddler-mode beach long weekend with Tatum',

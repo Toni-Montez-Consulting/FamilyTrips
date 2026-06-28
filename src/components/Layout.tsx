@@ -46,6 +46,24 @@ export default function Layout() {
   const basePath = `/${trip.slug}`
   const isManageRoute = location.pathname.replace(/\/+$/, '').endsWith('/manage')
 
+  const navOrder =
+    trip.kind === 'event'
+      ? [
+          { r: '', l: 'Home' }, { r: 'trip', l: 'Plan' }, { r: 'stay', l: 'Place' },
+          { r: 'people', l: 'People' }, { r: 'checklist', l: 'Tasks' }, { r: 'budget', l: 'Budget' },
+        ]
+      : [
+          { r: '', l: 'Home' }, { r: 'trip', l: 'Trip' }, { r: 'stay', l: 'Stay' },
+          { r: 'people', l: 'People' }, { r: 'checklist', l: 'Checklist' },
+          { r: 'packing', l: 'Packing' }, { r: 'budget', l: 'Budget' },
+        ]
+  const cleanPath = location.pathname.replace(/\/+$/, '')
+  const sub = cleanPath === basePath ? '' : cleanPath.slice(basePath.length + 1)
+  const navIdx = navOrder.findIndex((x) => x.r === sub)
+  const prevPage = navIdx > 0 ? navOrder[navIdx - 1] : null
+  const nextPage = navIdx >= 0 && navIdx < navOrder.length - 1 ? navOrder[navIdx + 1] : null
+  const pageHref = (r: string) => `${basePath}${r ? `/${r}` : ''}`
+
   return (
     <TripContext.Provider value={trip}>
       <div className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-900">
@@ -64,6 +82,27 @@ export default function Layout() {
             <span>All trips</span>
           </Link>
           <Outlet />
+          {!isManageRoute && navIdx >= 0 && (prevPage || nextPage) && (
+            <nav
+              aria-label="Page navigation"
+              className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-4"
+            >
+              {prevPage ? (
+                <Link to={pageHref(prevPage.r)} className="text-sm text-slate-600 hover:text-slate-900">
+                  ← {prevPage.l}
+                </Link>
+              ) : (
+                <span />
+              )}
+              {nextPage ? (
+                <Link to={pageHref(nextPage.r)} className="text-sm text-slate-600 hover:text-slate-900">
+                  {nextPage.l} →
+                </Link>
+              ) : (
+                <span />
+              )}
+            </nav>
+          )}
         </main>
         {!isManageRoute && <BottomNav basePath={basePath} kind={trip.kind} />}
       </div>
