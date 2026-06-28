@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { TripOverrideHistoryRow, TripOverrideRow } from '../utils/tripOverrides'
+import type { AuditLogRow, TripOverrideHistoryRow, TripOverrideRow } from '../utils/tripOverrides'
 import { editableFieldsFromTrip } from '../utils/tripOverrides'
 import { okc } from '../data/trips/okc'
 import { familyCookout } from '../data/trips/family-cookout'
@@ -9,13 +9,16 @@ function createStore(seedHistory: TripOverrideHistoryRow[] = [], seedCurrent: Tr
   store: TripOverrideStore
   current: TripOverrideRow | null
   history: TripOverrideHistoryRow[]
+  audits: AuditLogRow[]
 } {
   const state: {
     current: TripOverrideRow | null
     history: TripOverrideHistoryRow[]
+    audits: AuditLogRow[]
   } = {
     current: seedCurrent,
     history: seedHistory.slice(),
+    audits: [],
   }
 
   return {
@@ -24,6 +27,9 @@ function createStore(seedHistory: TripOverrideHistoryRow[] = [], seedCurrent: Tr
     },
     get history() {
       return state.history
+    },
+    get audits() {
+      return state.audits
     },
     store: {
       async getCurrent(tripSlug) {
@@ -42,6 +48,9 @@ function createStore(seedHistory: TripOverrideHistoryRow[] = [], seedCurrent: Tr
         return (
           state.history.find((row) => row.trip_slug === tripSlug && row.version === version) ?? null
         )
+      },
+      async appendAudit(row) {
+        state.audits.push(row)
       },
     },
   }
@@ -80,6 +89,24 @@ describe('trip override API action handler', () => {
     expect(state.current?.version).toBe(1)
     expect(state.current?.data.name).toBe('OKC Owner Edit')
     expect(state.history).toHaveLength(1)
+  })
+
+  it('writes an audit row on save', async () => {
+    const state = createStore()
+    await runTripOverrideAction(
+      {
+        action: 'save',
+        tripSlug: 'okc',
+        pin: '1234',
+        data: { ...editableFieldsFromTrip(okc), name: 'OKC audited' },
+      },
+      state.store,
+      { adminPin: '1234' },
+    )
+
+    expect(state.audits).toHaveLength(1)
+    expect(state.audits[0].action).toBe('save')
+    expect(state.audits[0].trip_slug).toBe('okc')
   })
 
   it('does not let the shared editor PIN edit static seed trips', async () => {

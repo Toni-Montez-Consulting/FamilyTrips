@@ -1,5 +1,5 @@
 import { getTrip } from '../data/trips/index.js'
-import type { TripOverrideData, TripOverrideHistoryRow, TripOverrideRow } from '../utils/tripOverrides.js'
+import type { AuditLogRow, TripOverrideData, TripOverrideHistoryRow, TripOverrideRow } from '../utils/tripOverrides.js'
 import {
   applyTripOverride,
   dynamicTripFromRow,
@@ -48,6 +48,7 @@ export type TripOverrideStore = {
   insertHistory: (row: Omit<TripOverrideHistoryRow, 'id'>) => Promise<void>
   getHistory: (tripSlug: string) => Promise<TripOverrideHistoryRow[]>
   getHistoryVersion: (tripSlug: string, version: number) => Promise<TripOverrideHistoryRow | null>
+  appendAudit: (row: AuditLogRow) => Promise<void>
 }
 
 export type TripOverrideActionResult =
@@ -264,6 +265,12 @@ export async function runTripOverrideAction(
     const row = rowForSave(body.tripSlug, version, historyRow.data, ownerName(body.updatedBy), rowSource, current)
     await store.upsertCurrent(row)
     await store.insertHistory({ ...row, restored_from_version: historyRow.version })
+    await store.appendAudit({
+      trip_slug: body.tripSlug,
+      actor: ownerName(body.updatedBy),
+      action: 'restore',
+      after_summary: `restored from version ${historyRow.version} as version ${version}`,
+    })
 
     return {
       status: 200,
@@ -303,6 +310,12 @@ export async function runTripOverrideAction(
   const row = rowForSave(body.tripSlug, version, data, ownerName(body.updatedBy), rowSource, current)
   await store.upsertCurrent(row)
   await store.insertHistory({ ...row, restored_from_version: null })
+  await store.appendAudit({
+    trip_slug: body.tripSlug,
+    actor: ownerName(body.updatedBy),
+    action: 'save',
+    after_summary: `version ${version}`,
+  })
 
   return {
     status: 200,
