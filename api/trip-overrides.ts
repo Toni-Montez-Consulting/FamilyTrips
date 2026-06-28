@@ -82,6 +82,18 @@ function createStore(url: string, serviceRoleKey: string): TripOverrideStore {
       if (error) throw error
       return (data as TripOverrideHistoryRow | null) ?? null
     },
+    async appendAudit(row) {
+      const { error } = await admin.from('audit_log').insert({
+        trip_slug: row.trip_slug,
+        person_id: row.person_id ?? null,
+        actor: row.actor ?? null,
+        action: row.action,
+        target: row.target ?? null,
+        before_summary: row.before_summary ?? null,
+        after_summary: row.after_summary ?? null,
+      })
+      if (error) throw error
+    },
   }
 }
 

@@ -29,6 +29,16 @@ export type TripOverrideHistoryRow = TripOverrideRow & {
   restored_from_version: number | null
 }
 
+export type AuditLogRow = {
+  trip_slug: string
+  person_id?: string | null
+  actor?: string | null
+  action: string
+  target?: string | null
+  before_summary?: string | null
+  after_summary?: string | null
+}
+
 const EDITABLE_KEYS = [
   'kind',
   'name',
