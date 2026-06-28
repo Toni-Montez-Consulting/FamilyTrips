@@ -8,6 +8,7 @@ const tripItems: Item[] = [
   { to: 'stay', label: 'Stay', icon: '🛏️' },
   { to: 'people', label: 'People', icon: '👪' },
   { to: 'checklist', label: 'List', icon: '✅' },
+  { to: 'packing', label: 'Pack', icon: '🎒' },
   { to: 'budget', label: 'Budget', icon: '💰' },
 ]
 

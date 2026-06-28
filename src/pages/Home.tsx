@@ -127,6 +127,15 @@ export default function Home() {
           size="md"
         />
       </div>
+
+      <div className="flex justify-center">
+        <Link
+          to={`${basePath}/manage`}
+          className="text-sm text-slate-400 underline-offset-4 hover:text-slate-600 hover:underline"
+        >
+          Edit this trip
+        </Link>
+      </div>
     </div>
   )
 }

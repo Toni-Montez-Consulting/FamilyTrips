@@ -4,9 +4,11 @@ import { okc } from './okc.js'
 import { loganBachelor } from './logan-bachelor.js'
 import { familyCookout } from './family-cookout.js'
 import { mothersDay2026 } from './mothers-day-2026.js'
+import { myrtleBeach } from './myrtle-beach.js'
 import { todayLocalISO } from '../../utils/formatters.js'
 
 export const trips: Record<string, Trip> = {
+  [myrtleBeach.slug]: myrtleBeach,
   [stpete.slug]: stpete,
   [okc.slug]: okc,
   [loganBachelor.slug]: loganBachelor,

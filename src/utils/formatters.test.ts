@@ -24,7 +24,7 @@ describe('trip visibility and sorting', () => {
 
     const trips = listTripsSorted()
 
-    expect(trips.map((trip) => trip.slug)).toEqual(['okc', 'stpete'])
+    expect(trips.map((trip) => trip.slug)).toEqual(['okc', 'myrtle-beach', 'stpete'])
     expect(trips.some((trip) => trip.slug === 'logan-bachelor')).toBe(false)
   })
 })
