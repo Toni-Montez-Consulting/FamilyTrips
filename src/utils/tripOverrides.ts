@@ -116,8 +116,18 @@ export function dynamicTripFromRow(row: TripOverrideRow | null | undefined): Tri
       slug: row.trip_slug,
     } as Trip
 
-    return validateTripData([trip]).length === 0 ? cloneTrip(trip) : null
-  } catch {
+    const errors = validateTripData([trip])
+    if (errors.length > 0) {
+      // Fail-Loud (lite): corrupt/outdated dynamic trip data is logged, not silently dropped.
+      console.warn(
+        `[trip-overrides] dynamic trip "${row.trip_slug}" failed validation and was hidden:`,
+        errors.map((error) => error.message).join('; '),
+      )
+      return null
+    }
+    return cloneTrip(trip)
+  } catch (error) {
+    console.warn(`[trip-overrides] dynamic trip "${row?.trip_slug}" could not be parsed:`, error)
     return null
   }
 }
