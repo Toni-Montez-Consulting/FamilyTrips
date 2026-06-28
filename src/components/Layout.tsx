@@ -57,7 +57,7 @@ export default function Layout() {
         </a>
         <main id="main" className={`mx-auto w-full max-w-2xl px-5 pt-5 sm:px-6 ${isManageRoute ? 'pb-10' : 'pb-28'}`}>
           <Link
-            to="/"
+            to="/trips"
             className="inline-flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900 mb-3"
           >
             <span aria-hidden>←</span>
