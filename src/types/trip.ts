@@ -163,8 +163,14 @@ export type Household = {
   id: string
   name: string
   primaryContactPersonId?: string
+  // For a group that is coming but not yet entered name-by-name (e.g. "Morgan's
+  // family, ~14"). Roster totals add this on top of the enumerated members.
+  expectedCount?: number
   notes?: string
 }
+
+// going/maybe/not-going for the roster; unknown = no reply yet (the default).
+export type RsvpStatus = 'going' | 'maybe' | 'not-going' | 'unknown'
 
 // Permission role lives on trip_members (owner/editor/household-lead/viewer),
 // NOT here. Person.role stays a free-text display label ("Wife", "Dad").
@@ -176,6 +182,7 @@ export type Person = {
   arriving?: string
   leaving?: string
   household_id?: string
+  rsvp?: RsvpStatus
 }
 
 export type ContactKind = 'phone' | 'url' | 'text'
@@ -246,6 +253,7 @@ export type Trip = {
   itinerary: Day[]
   thingsToDo: Activity[]
   people: Person[]
+  households?: Household[]
   contacts: Contact[]
   checklist: ChecklistItem[]
   packing?: PackingItem[]
