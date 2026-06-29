@@ -183,9 +183,22 @@ function rowForSave(
   }
 }
 
-async function nextVersion(store: TripOverrideStore, tripSlug: string): Promise<number> {
-  const current = await store.getCurrent(tripSlug)
-  return (current?.version ?? 0) + 1
+// Best-effort audit: by the time we write the audit row the override mutation has
+// already committed, so a failed audit write must NOT fail the whole request — that
+// would report a saved edit as an error and invite a duplicate-save retry. Log it
+// loudly instead, so a missing audit row is greppable rather than silent.
+async function safeAppendAudit(
+  store: TripOverrideStore,
+  entry: Parameters<TripOverrideStore['appendAudit']>[0],
+): Promise<void> {
+  try {
+    await store.appendAudit(entry)
+  } catch (err) {
+    console.error(
+      `[audit] LOST audit row for ${entry.trip_slug} (${entry.action}): ${entry.after_summary}`,
+      err,
+    )
+  }
 }
 
 export async function runTripOverrideAction(
@@ -261,11 +274,14 @@ export async function runTripOverrideAction(
       }
     }
 
-    const version = await nextVersion(store, body.tripSlug)
+    // Reuse the `current` already fetched above (line ~213) as the single source of
+    // the version, instead of a second getCurrent — closes the read-then-read race
+    // where two concurrent saves could both compute the same next version.
+    const version = (current?.version ?? 0) + 1
     const row = rowForSave(body.tripSlug, version, historyRow.data, ownerName(body.updatedBy), rowSource, current)
     await store.upsertCurrent(row)
     await store.insertHistory({ ...row, restored_from_version: historyRow.version })
-    await store.appendAudit({
+    await safeAppendAudit(store, {
       trip_slug: body.tripSlug,
       actor: ownerName(body.updatedBy),
       action: 'restore',
@@ -306,11 +322,14 @@ export async function runTripOverrideAction(
     }
   }
 
-  const version = await nextVersion(store, body.tripSlug)
+  // Reuse the `current` already fetched above (line ~213) as the single source of
+  // the version, instead of a second getCurrent — closes the read-then-read race
+  // where two concurrent saves could both compute the same next version.
+  const version = (current?.version ?? 0) + 1
   const row = rowForSave(body.tripSlug, version, data, ownerName(body.updatedBy), rowSource, current)
   await store.upsertCurrent(row)
   await store.insertHistory({ ...row, restored_from_version: null })
-  await store.appendAudit({
+  await safeAppendAudit(store, {
     trip_slug: body.tripSlug,
     actor: ownerName(body.updatedBy),
     action: 'save',
