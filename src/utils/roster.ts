@@ -1,4 +1,5 @@
 import type { Trip, Person, Household, RsvpStatus } from '../types/trip'
+import { toPlainText } from './plainText'
 
 export type RosterGroup = {
   household: Household | null // null = people with no (or an unresolved) household
@@ -86,16 +87,6 @@ export function buildRoster(trip: Trip): { groups: RosterGroup[]; counts: Roster
   return { groups, counts }
 }
 
-// Strip fancy punctuation so the copied roster reads plainly in a group chat.
-function plain(s: string): string {
-  return s
-    .replace(/[—–]/g, '-')
-    .replace(/·/g, ', ')
-    .replace(/…/g, '...')
-    .replace(/[‘’]/g, "'")
-    .replace(/[“”]/g, '"')
-}
-
 // Plain-text, household-grouped roster for the "Copy roster" button.
 export function formatRoster(trip: Trip): string {
   const { groups, counts } = buildRoster(trip)
@@ -120,5 +111,5 @@ export function formatRoster(trip: Trip): string {
   if (counts.unknown) summary.push(`${counts.unknown} no reply yet`)
   lines.push(summary.join(', '))
 
-  return plain(lines.join('\n'))
+  return toPlainText(lines.join('\n'))
 }
