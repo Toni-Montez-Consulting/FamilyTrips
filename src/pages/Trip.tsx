@@ -13,7 +13,7 @@ import {
 
 function StatusPill({ value }: { value?: string }) {
   if (!value) return null
-  return <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">{value}</span>
+  return <span className="rounded-full bg-paper px-2 py-0.5 text-xs font-medium text-ink-soft">{value}</span>
 }
 
 export default function Trip() {
@@ -26,22 +26,22 @@ export default function Trip() {
     <div className="space-y-6">
       <header className="space-y-1">
         <h1 className="text-3xl font-bold">{isEvent ? 'Schedule' : 'Trip'}</h1>
-        <p className="text-slate-600">
+        <p className="text-ink-soft">
           {isEvent ? 'The plan for the gathering.' : 'Day-by-day plan and things to do.'}
         </p>
       </header>
 
       <nav aria-label="On this page" className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1">
-        <a href="#itinerary" className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-800 text-sm font-medium">🗓️ {scheduleLabel}</a>
+        <a href="#itinerary" className="px-4 py-2 rounded-full bg-surface border border-rule text-ink text-sm font-medium">🗓️ {scheduleLabel}</a>
         {trip.food?.length ? (
-          <a href="#food" className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-800 text-sm font-medium">🍽️ Food</a>
+          <a href="#food" className="px-4 py-2 rounded-full bg-surface border border-rule text-ink text-sm font-medium">🍽️ Food</a>
         ) : null}
         {trip.copyBlocks?.length ? (
-          <a href="#messages" className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-800 text-sm font-medium">📋 Messages</a>
+          <a href="#messages" className="px-4 py-2 rounded-full bg-surface border border-rule text-ink text-sm font-medium">📋 Messages</a>
         ) : null}
-        <a href="#things" className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-800 text-sm font-medium">📍 {thingsLabel}</a>
+        <a href="#things" className="px-4 py-2 rounded-full bg-surface border border-rule text-ink text-sm font-medium">📍 {thingsLabel}</a>
         {trip.planner?.sourceRefs.length ? (
-          <a href="#sources" className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-800 text-sm font-medium">🔎 Sources</a>
+          <a href="#sources" className="px-4 py-2 rounded-full bg-surface border border-rule text-ink text-sm font-medium">🔎 Sources</a>
         ) : null}
       </nav>
 
@@ -61,34 +61,34 @@ export default function Trip() {
         )}
         <div className="space-y-4">
           {trip.planner?.warnings.length ? (
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            <div className="rounded-[8px] border border-rule border-l-4 border-l-live bg-surface p-4 text-sm text-ink-soft">
               {trip.planner.warnings[0]}
             </div>
           ) : null}
           {trip.itinerary.map((day) => (
-            <article key={day.date} className="rounded-2xl border border-slate-200 overflow-hidden">
-              <header className="flex items-center justify-between gap-3 px-4 py-3 bg-slate-100">
+            <article key={day.date} className="rounded-[8px] border border-rule overflow-hidden">
+              <header className="flex items-center justify-between gap-3 px-4 py-3 bg-paper">
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-slate-500">{formatLongDate(day.date)}</p>
-                  {day.title && <h3 className="font-semibold text-slate-900">{day.title}</h3>}
+                  <p className="text-xs uppercase tracking-wide text-ink-soft">{formatLongDate(day.date)}</p>
+                  {day.title && <h3 className="font-semibold text-ink">{day.title}</h3>}
                 </div>
                 <CopyButton text={formatDay(day)} label="Copy day" />
               </header>
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-rule">
                 {day.items.map((item, i) => (
-                  <li key={i} className={`px-4 py-3 flex gap-4 ${item.open ? 'bg-slate-50' : ''}`}>
-                    {item.time && <span className="text-slate-500 font-mono text-sm w-20 shrink-0">{item.time}</span>}
+                  <li key={i} className={`px-4 py-3 flex gap-4 ${item.open ? 'bg-paper' : ''}`}>
+                    {item.time && <span className="text-ink-soft font-mono text-sm w-20 shrink-0">{item.time}</span>}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-slate-900">
+                      <p className="font-medium text-ink">
                         {item.anchor && (
-                          <span className="mr-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800 align-middle">
+                          <span className="mr-2 rounded-full bg-surface border border-live px-2 py-0.5 text-xs font-semibold text-live align-middle">
                             Anchor
                           </span>
                         )}
                         {item.title}
                       </p>
                       {item.open ? (
-                        <p className="text-sm text-slate-600 mt-1">Kept open on purpose — leave room to breathe.</p>
+                        <p className="text-sm text-ink-soft mt-1">Kept open on purpose — leave room to breathe.</p>
                       ) : (
                         <StatusPill value={item.status} />
                       )}
@@ -97,20 +97,20 @@ export default function Trip() {
                           href={mapsLink(item.address)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-700 underline decoration-slate-200 underline-offset-2 break-words"
+                          className="text-sm text-live underline decoration-rule underline-offset-2 break-words"
                         >
                           {item.address}
                         </a>
                       )}
-                      {item.notes && <p className="text-sm text-slate-600 mt-1">{item.notes}</p>}
-                      {item.why && <p className="text-xs text-slate-500 mt-1">Why: {item.why}</p>}
-                      {item.nextStep && <p className="text-xs text-slate-500 mt-1">Next: {item.nextStep}</p>}
+                      {item.notes && <p className="text-sm text-ink-soft mt-1">{item.notes}</p>}
+                      {item.why && <p className="text-xs text-ink-soft mt-1">Why: {item.why}</p>}
+                      {item.nextStep && <p className="text-xs text-ink-soft mt-1">Next: {item.nextStep}</p>}
                       {item.link && (
                         <a
                           href={item.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-700 underline underline-offset-2 break-all"
+                          className="text-sm text-live underline underline-offset-2 break-all"
                         >
                           {item.link}
                         </a>
@@ -134,13 +134,13 @@ export default function Trip() {
         >
           <ul className="space-y-3">
             {trip.food.map((item) => (
-              <li key={item.id} className="rounded-2xl border border-slate-200 p-4">
+              <li key={item.id} className="rounded-[8px] border border-rule p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-semibold text-slate-900">{item.title}</p>
-                    <p className="text-xs text-slate-500">{item.category}</p>
+                    <p className="font-semibold text-ink">{item.title}</p>
+                    <p className="text-xs text-ink-soft">{item.category}</p>
                     {(item.quantity || item.assignedTo || item.notes) && (
-                      <p className="text-sm text-slate-700 mt-1">
+                      <p className="text-sm text-ink-soft mt-1">
                         {[item.quantity, item.assignedTo ? `From ${item.assignedTo}` : null, item.notes]
                           .filter(Boolean)
                           .join(' · ')}
@@ -168,11 +168,11 @@ export default function Trip() {
         >
           <ul className="space-y-3">
             {trip.copyBlocks.map((block) => (
-              <li key={block.id} className="rounded-2xl border border-slate-200 p-4">
+              <li key={block.id} className="rounded-[8px] border border-rule p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-semibold text-slate-900">{block.title}</p>
-                    <p className="text-sm text-slate-700 whitespace-pre-line mt-1">{block.body}</p>
+                    <p className="font-semibold text-ink">{block.title}</p>
+                    <p className="text-sm text-ink-soft whitespace-pre-line mt-1">{block.body}</p>
                   </div>
                   <CopyButton text={block.body} label="Copy" />
                 </div>
@@ -188,21 +188,21 @@ export default function Trip() {
         )}
         <ul className="space-y-3">
           {trip.thingsToDo.map((a) => (
-            <li key={a.id} className="rounded-2xl border border-slate-200 p-4">
+            <li key={a.id} className="rounded-[8px] border border-rule p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="font-semibold text-slate-900">{a.name}</p>
+                  <p className="font-semibold text-ink">{a.name}</p>
                   <StatusPill value={a.status} />
-                  {a.category && <p className="text-xs text-slate-500">{a.category}</p>}
-                  {a.notes && <p className="text-sm text-slate-700 mt-1">{a.notes}</p>}
-                  {a.why && <p className="text-xs text-slate-500 mt-1">Why: {a.why}</p>}
-                  {a.nextStep && <p className="text-xs text-slate-500 mt-1">Next: {a.nextStep}</p>}
+                  {a.category && <p className="text-xs text-ink-soft">{a.category}</p>}
+                  {a.notes && <p className="text-sm text-ink-soft mt-1">{a.notes}</p>}
+                  {a.why && <p className="text-xs text-ink-soft mt-1">Why: {a.why}</p>}
+                  {a.nextStep && <p className="text-xs text-ink-soft mt-1">Next: {a.nextStep}</p>}
                   {a.address && (
                     <a
                       href={mapsLink(a.address)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-700 underline underline-offset-2 break-words mt-1 inline-block"
+                      className="text-sm text-live underline underline-offset-2 break-words mt-1 inline-block"
                     >
                       {a.address}
                     </a>
@@ -213,7 +213,7 @@ export default function Trip() {
                         href={a.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-700 underline underline-offset-2 break-all"
+                        className="text-sm text-live underline underline-offset-2 break-all"
                       >
                         {a.url}
                       </a>
@@ -233,21 +233,21 @@ export default function Trip() {
       {trip.planner?.sourceRefs.length ? (
         <Section id="sources" title="Sources & Confidence" icon="🔎">
           <div className="space-y-3">
-            <p className="text-sm text-slate-700">
+            <p className="text-sm text-ink-soft">
               Draft strength: <span className="font-semibold">{trip.planner.draftStrength}</span>. Confirm anything marked as booking-sensitive before relying on it.
             </p>
             <ul className="space-y-2">
               {trip.planner.sourceRefs.map((source) => (
-                <li key={source.id} className="rounded-2xl border border-slate-200 p-3 text-sm">
+                <li key={source.id} className="rounded-[8px] border border-rule p-3 text-sm">
                   {source.url ? (
-                    <a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-700 underline underline-offset-2">
+                    <a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-live underline underline-offset-2">
                       {source.title}
                     </a>
                   ) : (
-                    <span className="font-semibold text-slate-900">{source.title}</span>
+                    <span className="font-semibold text-ink">{source.title}</span>
                   )}
-                  <span className="ml-2 text-xs text-slate-500">{source.kind}</span>
-                  {source.note && <p className="mt-1 text-slate-600">{source.note}</p>}
+                  <span className="ml-2 text-xs text-ink-soft">{source.kind}</span>
+                  {source.note && <p className="mt-1 text-ink-soft">{source.note}</p>}
                 </li>
               ))}
             </ul>

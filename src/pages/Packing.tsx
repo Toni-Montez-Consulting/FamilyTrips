@@ -73,26 +73,26 @@ export default function Packing() {
     <div className="space-y-6">
       <header className="space-y-1">
         <h1 className="text-3xl font-bold">{isEvent ? 'Supplies' : 'Packing'}</h1>
-        <p className="text-slate-600">
+        <p className="text-ink-soft">
           {isEvent ? 'What to bring' : 'What to bring'} — {packed} of {total} packed ({pct}%).
         </p>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-soft">
           Tap any item as it goes in the bag. Supabase syncs when configured; otherwise changes stay in this browser session.
         </p>
       </header>
 
       {total > 0 && (
-        <div className="rounded-3xl bg-white border border-slate-200 p-5 shadow-sm space-y-3">
+        <div className="rounded-[8px] bg-surface border border-rule p-5 space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-slate-600">{isEvent ? 'Supply progress' : 'Packing progress'}</span>
+            <span className="text-sm text-ink-soft">{isEvent ? 'Supply progress' : 'Packing progress'}</span>
             <div className="flex items-center gap-2">
               <SyncStatusChip status={status} />
               <span className="font-semibold">{pct}%</span>
             </div>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-paper rounded-full h-3 overflow-hidden">
             <div
-              className="bg-green-500 h-3 rounded-full transition-all"
+              className="bg-open h-3 rounded-full transition-all"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -115,7 +115,7 @@ export default function Packing() {
           copyText={formatPackingList(list, `${trip.name} ${isEvent ? 'Supplies' : 'Packing'}`)}
           copyLabel="Copy section"
         >
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-rule">
             {list.map((item) => (
               <li key={item.id} className="py-3">
                 <div className="flex items-start gap-3">
@@ -125,23 +125,23 @@ export default function Packing() {
                     aria-checked={item.packed}
                     aria-label={`Mark "${item.title}" ${item.packed ? 'unpacked' : 'packed'}`}
                     onClick={() => toggle(item.stateKey, !item.packed)}
-                    className={`flex-shrink-0 mt-0.5 w-8 h-8 -m-0.5 p-0.5 rounded-full flex items-center justify-center text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-500 active:scale-95 ${
+                    className={`flex-shrink-0 mt-0.5 w-8 h-8 -m-0.5 p-0.5 rounded-full flex items-center justify-center text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-open active:scale-95 ${
                       item.packed
-                        ? 'bg-green-500 text-white hover:bg-green-600'
-                        : 'bg-slate-100 text-slate-400 border border-slate-300 hover:bg-slate-200'
+                        ? 'bg-open text-paper hover:bg-open'
+                        : 'bg-paper text-held border border-rule hover:bg-paper'
                     }`}
                   >
                     {item.packed ? '✓' : ''}
                   </button>
                   <div className="min-w-0 flex-1">
-                    <p className={item.packed ? 'text-slate-500 line-through' : 'text-slate-900'}>
+                    <p className={item.packed ? 'text-ink-soft line-through' : 'text-ink'}>
                       {item.title}
                       {item.quantity && (
-                        <span className="text-sm text-slate-500"> · {item.quantity}</span>
+                        <span className="text-sm text-ink-soft"> · {item.quantity}</span>
                       )}
                     </p>
                     {(item.assignedTo || item.notes) && (
-                      <p className="text-sm text-slate-600 mt-0.5">
+                      <p className="text-sm text-ink-soft mt-0.5">
                         {[item.assignedTo ? `For ${item.assignedTo}` : null, item.notes]
                           .filter(Boolean)
                           .join(' · ')}

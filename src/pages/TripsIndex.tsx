@@ -12,10 +12,10 @@ export default function TripsIndex() {
   const progress = useAllTripsProgress(trips)
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-paper text-ink">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:px-3 focus:py-2 focus:rounded-md focus:border focus:border-slate-300"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-surface focus:px-3 focus:py-2 focus:rounded-md focus:border focus:border-rule"
       >
         Skip to content
       </a>
@@ -23,12 +23,12 @@ export default function TripsIndex() {
         <header className="space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1">
-              <h1 className="text-3xl font-bold">Our trips</h1>
-              <p className="text-slate-600">Upcoming first. Tap a trip to open it.</p>
+              <h1 className="text-3xl font-semibold text-ink">Our trips</h1>
+              <p className="text-ink-soft">Upcoming first. Tap a trip to open it.</p>
             </div>
             <Link
               to="/trips/new"
-              className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm active:scale-[0.98]"
+              className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper hover:bg-ink-soft active:scale-[0.98]"
             >
               Add trip
             </Link>
@@ -36,7 +36,7 @@ export default function TripsIndex() {
         </header>
 
         {(status === 'error' || status === 'offline') && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <div className="rounded-[8px] border border-rule border-l-4 border-l-live bg-surface px-4 py-3 text-sm text-ink-soft">
             Live trip list is {status === 'offline' ? 'offline' : 'unavailable'} right now. Saved direct
             links still open when Supabase is connected.
           </div>
