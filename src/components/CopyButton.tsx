@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { toPlainText } from '../utils/plainText'
 
 type Props = {
   text: string
@@ -17,12 +18,15 @@ export default function CopyButton({ text, label = 'Copy for text', className = 
   }, [copied])
 
   const onClick = async () => {
+    // Everything copied out of the app is destined for a text/chat, so normalize
+    // fancy punctuation to plain ASCII before it lands on the clipboard.
+    const out = toPlainText(text)
     try {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(out)
       setCopied(true)
     } catch {
       const ta = document.createElement('textarea')
-      ta.value = text
+      ta.value = out
       ta.setAttribute('readonly', '')
       ta.style.position = 'fixed'
       ta.style.opacity = '0'

@@ -4,20 +4,50 @@ import CopyButton from '../components/CopyButton'
 import EmptyState from '../components/EmptyState'
 import { formatPerson } from '../utils/formatters'
 import { buildRoster, formatRoster, rsvpOf, rsvpDisplay } from '../utils/roster'
+import type { Person } from '../types/trip'
 
 function telHref(phone: string) {
   return `tel:${phone.replace(/[^+\d]/g, '')}`
 }
 
+function PersonRow({ p, showRsvp }: { p: Person; showRsvp: boolean }) {
+  const d = rsvpDisplay(rsvpOf(p))
+  return (
+    <li className="flex items-center justify-between gap-3 py-3">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          <p className="font-semibold text-ink">{p.name}</p>
+          {showRsvp && (
+            <span className={`font-mono text-[0.62rem] uppercase tracking-[0.1em] ${d.tone}`}>{d.label}</span>
+          )}
+        </div>
+        {p.role && <p className="text-sm text-ink-soft">{p.role}</p>}
+        {p.phone && (
+          <a href={telHref(p.phone)} className="text-live underline underline-offset-2 break-all">
+            {p.phone}
+          </a>
+        )}
+      </div>
+      <CopyButton text={formatPerson(p)} label="Copy" />
+    </li>
+  )
+}
+
 export default function People() {
   const trip = useTrip()
   const { groups, counts } = buildRoster(trip)
-  const householdCount = groups.filter((g) => g.household).length
+
+  // Degrade gracefully: a trip that has not adopted households/RSVP (e.g. older
+  // trips) shows a plain list, not an empty "0 going / 0 households" roster.
+  const usesHouseholds = groups.some((g) => g.household)
+  const usesRsvp = trip.people.some((p) => p.rsvp && p.rsvp !== 'unknown')
+  const showRoster = usesHouseholds || usesRsvp || counts.expected > 0
 
   const summaryBits = [`${counts.going} going`]
   if (counts.maybe) summaryBits.push(`${counts.maybe} maybe`)
   if (counts.unknown) summaryBits.push(`${counts.unknown} no reply`)
   if (counts.expected) summaryBits.push(`~${counts.expected} more to be named`)
+  const householdCount = groups.filter((g) => g.household).length
 
   return (
     <div className="space-y-6">
@@ -26,31 +56,33 @@ export default function People() {
         <p className="text-ink-soft">Who’s coming and who to call.</p>
       </header>
 
-      <div className="rounded-[8px] border border-rule border-l-4 border-l-live bg-surface p-5">
-        <div className="flex items-baseline justify-between gap-3">
-          <div>
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">Roster</p>
-            <p className="mt-1 text-3xl font-semibold leading-none text-ink">
-              ~{counts.headcount}{' '}
-              <span className="text-base font-normal text-ink-soft">coming</span>
-            </p>
+      {showRoster && (
+        <div className="rounded-[8px] border border-rule border-l-4 border-l-live bg-surface p-5">
+          <div className="flex items-baseline justify-between gap-3">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">Roster</p>
+              <p className="mt-1 text-3xl font-semibold leading-none text-ink">
+                ~{counts.headcount}{' '}
+                <span className="text-base font-normal text-ink-soft">coming</span>
+              </p>
+            </div>
+            <CopyButton text={formatRoster(trip)} label="Copy roster" />
           </div>
-          <CopyButton text={formatRoster(trip)} label="Copy roster" />
+          <p className="mt-3 text-sm text-ink-soft">
+            {summaryBits.join(' · ')}
+            {householdCount > 0 && (
+              <>
+                {' '}across {householdCount} household{householdCount === 1 ? '' : 's'}.
+              </>
+            )}
+          </p>
         </div>
-        <p className="mt-3 text-sm text-ink-soft">
-          {summaryBits.join(' · ')}
-          {householdCount > 0 && (
-            <>
-              {' '}across {householdCount} household{householdCount === 1 ? '' : 's'}.
-            </>
-          )}
-        </p>
-      </div>
+      )}
 
       <Section title="Who’s coming" icon="👪">
-        {groups.length === 0 ? (
+        {trip.people.length === 0 && counts.expected === 0 ? (
           <EmptyState icon="👪" title="No one added yet" body="Add the people coming on this trip." />
-        ) : (
+        ) : usesHouseholds ? (
           <div className="space-y-6">
             {groups.map((g, gi) => {
               const groupCount = g.members.length + (g.household?.expectedCount ?? 0)
@@ -67,37 +99,13 @@ export default function People() {
                   {g.household?.notes && (
                     <p className="mt-1 text-sm text-ink-soft">{g.household.notes}</p>
                   )}
-
                   {g.members.length > 0 && (
                     <ul className="mt-2 divide-y divide-rule">
-                      {g.members.map((p) => {
-                        const d = rsvpDisplay(rsvpOf(p))
-                        return (
-                          <li key={p.id} className="flex items-center justify-between gap-3 py-3">
-                            <div className="min-w-0">
-                              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                                <p className="font-semibold text-ink">{p.name}</p>
-                                <span className={`font-mono text-[0.62rem] uppercase tracking-[0.1em] ${d.tone}`}>
-                                  {d.label}
-                                </span>
-                              </div>
-                              {p.role && <p className="text-sm text-ink-soft">{p.role}</p>}
-                              {p.phone && (
-                                <a
-                                  href={telHref(p.phone)}
-                                  className="text-live underline underline-offset-2 break-all"
-                                >
-                                  {p.phone}
-                                </a>
-                              )}
-                            </div>
-                            <CopyButton text={formatPerson(p)} label="Copy" />
-                          </li>
-                        )
-                      })}
+                      {g.members.map((p) => (
+                        <PersonRow key={p.id} p={p} showRsvp={usesRsvp} />
+                      ))}
                     </ul>
                   )}
-
                   {g.household?.expectedCount ? (
                     <p className="mt-2 text-sm text-ink-soft">
                       + about {g.household.expectedCount} more at the condo, names added as RSVPs firm up.
@@ -107,6 +115,12 @@ export default function People() {
               )
             })}
           </div>
+        ) : (
+          <ul className="divide-y divide-rule">
+            {trip.people.map((p) => (
+              <PersonRow key={p.id} p={p} showRsvp={usesRsvp} />
+            ))}
+          </ul>
         )}
       </Section>
 
