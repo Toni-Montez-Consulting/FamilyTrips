@@ -73,7 +73,7 @@ function TripLine({ trip }: { trip: ReturnType<typeof listTrips>[number] }) {
         className="flex items-baseline justify-between gap-4 border-b border-rule py-3 transition hover:text-live"
       >
         <span className="font-display text-lg">{trip.name}</span>
-        <span className={`shrink-0 font-mono text-[0.68rem] uppercase tracking-[0.12em] ${wrapped ? 'text-held' : 'text-ink-soft'}`}>
+        <span className={`shrink-0 font-mono text-[0.68rem] uppercase tracking-[0.12em] text-ink-soft ${wrapped ? 'line-through' : ''}`}>
           {formatShortDate(trip.startDate)}
         </span>
       </Link>
@@ -168,7 +168,7 @@ export default function Landing() {
                 value={openSlug}
                 onChange={(e) => setOpenSlug(e.target.value)}
                 placeholder="paste the link or trip name"
-                className="min-h-12 w-full rounded-[6px] border border-rule bg-surface px-3 text-ink placeholder:text-held focus:border-ink focus:outline-none"
+                className="min-h-12 w-full rounded-[6px] border border-rule bg-surface px-3 text-ink placeholder:text-ink-soft focus:border-ink focus:outline-none"
               />
               <button
                 type="submit"

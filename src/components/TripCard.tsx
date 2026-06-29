@@ -6,7 +6,7 @@ import type { TripProgress } from '../hooks/useAllTripsProgress'
 function statusLabel(trip: Trip): { label: string; tone: string } {
   const startIn = daysUntil(trip.startDate)
   const endIn = daysUntil(trip.endDate)
-  if (endIn < 0) return { label: 'Wrapped', tone: 'text-held' }
+  if (endIn < 0) return { label: 'Wrapped', tone: 'text-ink-soft' }
   if (startIn <= 0) return { label: 'Happening now', tone: 'text-live' }
   if (startIn === 1) return { label: 'In 1 day', tone: 'text-live' }
   return { label: `In ${startIn} days`, tone: 'text-live' }
@@ -39,7 +39,7 @@ export default function TripCard({
       <div className="space-y-2 p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="truncate font-semibold text-ink">{trip.name}</h3>
+            <h2 className="truncate font-semibold text-ink">{trip.name}</h2>
             <p className="truncate text-sm text-ink-soft">{trip.location}</p>
           </div>
           <span className={`shrink-0 font-mono text-[0.68rem] uppercase tracking-[0.1em] ${status.tone}`}>

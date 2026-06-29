@@ -2077,6 +2077,7 @@ export default function ManageTrip() {
               value="trip-editor"
               readOnly
               tabIndex={-1}
+              aria-hidden="true"
               className="sr-only"
             />
             <input
