@@ -539,7 +539,7 @@ export default function NewTrip() {
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input type="text" autoComplete="username" value="trip-editor" readOnly tabIndex={-1} className="sr-only" />
+          <input type="text" autoComplete="username" value="trip-editor" readOnly tabIndex={-1} aria-hidden="true" className="sr-only" />
 
           <section className={CARD_CLASS}>
             <div className="mb-4 flex items-center justify-between gap-3">

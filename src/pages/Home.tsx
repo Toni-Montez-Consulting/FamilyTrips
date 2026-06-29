@@ -131,7 +131,7 @@ export default function Home() {
       <div className="flex justify-center">
         <Link
           to={`${basePath}/manage`}
-          className="text-sm text-held underline-offset-4 hover:text-ink-soft hover:underline"
+          className="text-sm text-ink-soft underline-offset-4 hover:text-ink hover:underline"
         >
           Edit this trip
         </Link>

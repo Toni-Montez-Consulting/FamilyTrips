@@ -97,8 +97,9 @@ function AddItemForm({ categories, onSubmit, onCancel }: AddFormProps) {
   return (
     <form onSubmit={handleSubmit} className="rounded-[8px] border border-rule p-4 space-y-3">
       <div>
-        <label className="block text-sm font-medium text-ink mb-1">Title</label>
+        <label htmlFor="new-item-title" className="block text-sm font-medium text-ink mb-1">Title</label>
         <input
+          id="new-item-title"
           type="text"
           required
           value={title}
@@ -109,8 +110,9 @@ function AddItemForm({ categories, onSubmit, onCancel }: AddFormProps) {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-ink mb-1">Category</label>
+          <label htmlFor="new-item-category" className="block text-sm font-medium text-ink mb-1">Category</label>
           <select
+            id="new-item-category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full rounded-xl border border-rule px-3 py-2 bg-surface focus:outline-none focus:ring-2 focus:ring-live"
@@ -125,10 +127,11 @@ function AddItemForm({ categories, onSubmit, onCancel }: AddFormProps) {
         </div>
         {showOther && (
           <div>
-            <label className="block text-sm font-medium text-ink mb-1">
+            <label htmlFor="new-item-new-category" className="block text-sm font-medium text-ink mb-1">
               New category
             </label>
             <input
+              id="new-item-new-category"
               type="text"
               value={categoryOther}
               onChange={(e) => setCategoryOther(e.target.value)}
@@ -139,8 +142,9 @@ function AddItemForm({ categories, onSubmit, onCancel }: AddFormProps) {
         )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-ink mb-1">Notes (optional)</label>
+        <label htmlFor="new-item-notes" className="block text-sm font-medium text-ink mb-1">Notes (optional)</label>
         <textarea
+          id="new-item-notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}

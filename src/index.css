@@ -10,6 +10,8 @@
   --color-ink-soft: #6f665b;
   --color-rule: #e4ded1;
   --color-live: #bf4a2a;
+  /* held: decorative/dark-bg only (chevrons, disabled fills, the dark Budget panel).
+     It is NOT AA on paper, so never use text-held for readable text on light — use ink-soft. */
   --color-held: #9b9488;
   --color-open: #4f7361;
   --font-display: 'Fraunces', Georgia, serif;
@@ -37,5 +39,16 @@
 
   button, a {
     touch-action: manipulation;
+  }
+
+  /* Respect users who ask for less motion (vestibular safety). Neutralizes the
+     active:scale press, hover transitions, and any animation across the app. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
