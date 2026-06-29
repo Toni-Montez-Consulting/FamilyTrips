@@ -262,17 +262,42 @@ export const myrtleBeach: Trip = {
     { id: 'pk-chargers', title: 'Chargers + portable battery', category: 'Tech' },
     { id: 'pk-bags', title: 'Plastic / wet bags', category: 'Parent backup' },
     { id: 'pk-airtag', title: 'AirTag for the car seat bag', category: 'Parent backup' },
+
+    // 302A stocks the basics only — the guidebook says bring these
+    { id: 'pk-blankets', title: 'Blankets — beds are made but the condo provides NONE', category: 'Condo (302A)' },
+    { id: 'pk-toiletries', title: 'All toiletries — soap, shampoo, hairdryer (none provided)', category: 'Condo (302A)' },
+    { id: 'pk-paper', title: 'Extra toilet paper + paper towels (one-time starter kit only)', category: 'Condo (302A)' },
+    { id: 'pk-trash-bags', title: 'Extra trash bags, Ziplocs, food containers', category: 'Condo (302A)' },
+    { id: 'pk-coffee', title: 'Coffee + filters (the maker is there, the coffee is not)', category: 'Condo (302A)' },
+    { id: 'pk-detergent', title: 'Laundry detergent (in-unit washer/dryer)', category: 'Condo (302A)' },
+    { id: 'pk-beach-gear', title: 'Beach towels, chairs, and beach toys (none provided)', category: 'Beach / Pool' },
+    { id: 'pk-sunscreen-adult', title: 'Sunscreen for the grown-ups', category: 'Beach / Pool' },
   ],
 
   copyBlocks: [
     {
       id: 'cb-tips',
-      title: 'Smart tips — traveling with an 18-month-old',
+      title: 'Tatum’s first flight — you two have got this',
       body:
-        'Traveling with a toddler is less about one perfect trick and more about reducing friction. Plan around the ' +
-        'hardest moments: security, boarding, takeoff, layovers, diaper changes, and sleep disruption. Build the day in ' +
-        'short blocks — food, movement, toy rotation, diaper reset, sleep attempt, emergency screen time. The goal is not ' +
-        'a perfect flight; it is enough structure that the rough parts do not surprise you.',
+        'This is Tatum’s very first time flying, and at 18 months the goal is not a perfect flight, it is a calm one. ' +
+        'Toni and Morgan, the real trick is to lower your own expectations and plan around the hard moments, not the whole trip. ' +
+        'Build each leg in short blocks: a snack, some movement, a toy, a diaper reset, a nap try, and screen time only when ' +
+        'you truly need it. Trade off so one of you is always on and the other gets a real breather. If she melts down, it ' +
+        'passes, and every parent on that plane has been exactly where you are. You are more ready than you feel.',
+    },
+    {
+      id: 'cb-firstflight',
+      title: 'What actually helps an 18-month-old on a plane',
+      body:
+        'Ears: give her the straw cup, a pouch, or her pacifier during takeoff AND landing. The sucking clears the pressure. ' +
+        'Skip lollipops (choking risk).\n' +
+        'Snacks are activities, not just food: keep them in lots of small bags and hand over a “new” one every 20–30 minutes.\n' +
+        'Toys: one or two she has never seen, plus stickers and a roll of painter’s tape (weirdly the MVP). Save the tablet for ' +
+        'the back half of the long DFW→CLT leg.\n' +
+        'Walk her before boarding, not at the gate. Burn the energy first.\n' +
+        'The ~3 hour CLT layover is your friend: real food, a diaper change, and let her crawl and walk so the short MYR hop is easier.\n' +
+        'The 5:33a return is the hard one. Treat Jul 6 night like a travel-prep night and aim to be at MYR by ~4:00a so the ' +
+        'morning is calm instead of a scramble. You’ve got this.',
     },
     {
       id: 'cb-flights',
