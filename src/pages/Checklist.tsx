@@ -43,13 +43,13 @@ function ActorBadge({
   const actor = people.find((p) => p.id === actorId)
   if (!actor) return null
   return (
-    <p className="text-sm text-slate-600">
-      You’re checking items off as <span className="font-semibold text-slate-900">{actor.name}</span>
+    <p className="text-sm text-ink-soft">
+      You’re checking items off as <span className="font-semibold text-ink">{actor.name}</span>
       {' · '}
       <button
         type="button"
         onClick={onSwitch}
-        className="inline-flex min-h-8 items-center rounded-full px-2 -my-1 text-blue-700 underline underline-offset-2"
+        className="inline-flex min-h-8 items-center rounded-full px-2 -my-1 text-live underline underline-offset-2"
       >
         switch
       </button>
@@ -95,25 +95,25 @@ function AddItemForm({ categories, onSubmit, onCancel }: AddFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl border border-slate-200 p-4 space-y-3">
+    <form onSubmit={handleSubmit} className="rounded-[8px] border border-rule p-4 space-y-3">
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+        <label className="block text-sm font-medium text-ink mb-1">Title</label>
         <input
           type="text"
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Confirm rental car pickup time"
-          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-xl border border-rule px-3 py-2 focus:outline-none focus:ring-2 focus:ring-live"
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+          <label className="block text-sm font-medium text-ink mb-1">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-xl border border-rule px-3 py-2 bg-surface focus:outline-none focus:ring-2 focus:ring-live"
           >
             {categories.map((c) => (
               <option key={c} value={c}>
@@ -125,7 +125,7 @@ function AddItemForm({ categories, onSubmit, onCancel }: AddFormProps) {
         </div>
         {showOther && (
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-ink mb-1">
               New category
             </label>
             <input
@@ -133,32 +133,32 @@ function AddItemForm({ categories, onSubmit, onCancel }: AddFormProps) {
               value={categoryOther}
               onChange={(e) => setCategoryOther(e.target.value)}
               placeholder="e.g. Photography"
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-xl border border-rule px-3 py-2 focus:outline-none focus:ring-2 focus:ring-live"
             />
           </div>
         )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Notes (optional)</label>
+        <label className="block text-sm font-medium text-ink mb-1">Notes (optional)</label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
-          className="w-full rounded-xl border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-xl border border-rule px-3 py-2 focus:outline-none focus:ring-2 focus:ring-live"
         />
       </div>
       <div className="flex items-center gap-2 justify-end">
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 text-sm text-slate-600 hover:text-slate-900"
+          className="px-3 py-1.5 text-sm text-ink-soft hover:text-ink"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={!canSave || saving}
-          className="px-4 py-1.5 text-sm font-medium rounded-full bg-blue-600 text-white disabled:bg-slate-300 disabled:cursor-not-allowed"
+          className="px-4 py-1.5 text-sm font-medium rounded-full bg-ink text-paper disabled:bg-held disabled:cursor-not-allowed"
         >
           {saving ? 'Adding…' : 'Add item'}
         </button>
@@ -206,25 +206,25 @@ function EditItemForm({ item, categories, onSubmit, onCancel }: EditFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-3 mt-2"
+      className="rounded-xl bg-paper border border-rule p-3 space-y-3 mt-2"
     >
       <label className="block space-y-1">
-        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Title</span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft">Title</span>
         <input
           type="text"
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border border-rule px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-live"
         />
       </label>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <label className="block space-y-1">
-          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Category</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft">Category</span>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg border border-rule px-3 py-1.5 text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-live"
           >
             {categories.map((c) => (
               <option key={c} value={c}>
@@ -236,39 +236,39 @@ function EditItemForm({ item, categories, onSubmit, onCancel }: EditFormProps) {
         </label>
         {showOther && (
           <label className="block space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">New category</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft">New category</span>
             <input
               type="text"
               value={categoryOther}
               onChange={(e) => setCategoryOther(e.target.value)}
               placeholder="New category"
-              className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-rule px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-live"
             />
           </label>
         )}
       </div>
       <label className="block space-y-1">
-        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Notes</span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft">Notes</span>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Notes"
           rows={2}
-          className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border border-rule px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-live"
         />
       </label>
       <div className="flex items-center gap-2 justify-end">
         <button
           type="button"
           onClick={onCancel}
-          className="px-2 py-1 text-xs text-slate-600 hover:text-slate-900"
+          className="px-2 py-1 text-xs text-ink-soft hover:text-ink"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={!canSave || saving}
-          className="px-3 py-1 text-xs font-medium rounded-full bg-blue-600 text-white disabled:bg-slate-300"
+          className="px-3 py-1 text-xs font-medium rounded-full bg-ink text-paper disabled:bg-held"
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
@@ -359,10 +359,10 @@ export default function Checklist() {
     <div className="space-y-6">
       <header className="space-y-1">
         <h1 className="text-3xl font-bold">{isEvent ? 'Tasks' : 'Checklist'}</h1>
-        <p className="text-slate-600">
+        <p className="text-ink-soft">
           {isEvent ? 'Event prep' : 'Live trip prep'} — {done} of {total} done ({pct}%).
         </p>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-ink-soft">
           Tap any item to toggle. {syncEnabled ? 'Changes sync to everyone viewing this plan.' : 'Changes stay in this browser session until Supabase is configured.'}
         </p>
         {actorId && !showPicker && (
@@ -387,17 +387,17 @@ export default function Checklist() {
       )}
 
       {total > 0 && (
-        <div className="rounded-3xl bg-white border border-slate-200 p-5 shadow-sm space-y-3">
+        <div className="rounded-[8px] bg-surface border border-rule p-5 space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-slate-600">Overall progress</span>
+            <span className="text-sm text-ink-soft">Overall progress</span>
             <div className="flex items-center gap-2">
               <SyncStatusChip status={status} />
               <span className="font-semibold">{pct}%</span>
             </div>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-paper rounded-full h-3 overflow-hidden">
             <div
-              className="bg-green-500 h-3 rounded-full transition-all"
+              className="bg-open h-3 rounded-full transition-all"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -420,7 +420,7 @@ export default function Checklist() {
           copyText={formatChecklist(list)}
           copyLabel="Copy section"
         >
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-rule">
             {list.map((it) => {
               const actor = trip.people.find((p) => p.id === it.actorId)
               const actorFirstName = actor ? actor.name.split(' ')[0] : null
@@ -434,23 +434,23 @@ export default function Checklist() {
                       aria-checked={it.done}
                       aria-label={`Mark "${it.title}" ${it.done ? 'incomplete' : 'complete'}`}
                       onClick={() => toggle(it.id, !it.done)}
-                      className={`flex-shrink-0 mt-0.5 w-7 h-7 -m-0.5 p-0.5 rounded-full flex items-center justify-center text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-green-500 active:scale-95 ${
+                      className={`flex-shrink-0 mt-0.5 w-7 h-7 -m-0.5 p-0.5 rounded-full flex items-center justify-center text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-open active:scale-95 ${
                         it.done
-                          ? 'bg-green-500 text-white hover:bg-green-600'
-                          : 'bg-slate-100 text-slate-400 border border-slate-300 hover:bg-slate-200'
+                          ? 'bg-open text-paper hover:bg-open'
+                          : 'bg-paper text-held border border-rule hover:bg-paper'
                       }`}
                     >
                       {it.done ? '✓' : ''}
                     </button>
                     <div className="min-w-0 flex-1">
-                      <p className={it.done ? 'text-slate-500 line-through' : 'text-slate-900'}>
+                      <p className={it.done ? 'text-ink-soft line-through' : 'text-ink'}>
                         {it.title}
                       </p>
                       {it.notes && (
-                        <p className="text-sm text-slate-600 mt-0.5">{it.notes}</p>
+                        <p className="text-sm text-ink-soft mt-0.5">{it.notes}</p>
                       )}
                       {it.done && (actorFirstName || it.updatedAt) && (
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-ink-soft mt-0.5">
                           ✓ {actorFirstName ?? 'Someone'}
                           {it.updatedAt ? ` · ${formatTimeAgo(it.updatedAt)}` : ''}
                         </p>
@@ -461,7 +461,7 @@ export default function Checklist() {
                         <button
                           type="button"
                           onClick={() => setEditingId(it.id)}
-                          className="text-slate-500 hover:text-slate-800"
+                          className="text-ink-soft hover:text-ink"
                           aria-label={`Edit "${it.title}"`}
                         >
                           Edit
@@ -469,7 +469,7 @@ export default function Checklist() {
                         <button
                           type="button"
                           onClick={() => handleDeleteItem(it.id, it.title)}
-                          className="text-red-600 hover:text-red-800"
+                          className="text-live hover:text-live"
                           aria-label={`Delete "${it.title}"`}
                         >
                           Delete
@@ -492,14 +492,14 @@ export default function Checklist() {
         </Section>
       ))}
 
-      <div className="rounded-3xl bg-white border border-slate-200 p-5 shadow-sm space-y-3">
+      <div className="rounded-[8px] bg-surface border border-rule p-5 space-y-3">
         <div className="flex items-center justify-between">
-          <p className="font-semibold text-slate-900">Add an item</p>
+          <p className="font-semibold text-ink">Add an item</p>
           {!adding && (
             <button
               type="button"
               onClick={() => setAdding(true)}
-              className="px-3 py-1.5 text-sm font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98]"
+              className="px-3 py-1.5 text-sm font-medium rounded-full bg-ink text-paper hover:bg-ink-soft active:scale-[0.98]"
             >
               + New item
             </button>
@@ -513,7 +513,7 @@ export default function Checklist() {
           />
         )}
         {!adding && (
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-ink-soft">
             Anything else to track? Add it
             {syncEnabled
               ? ` and everyone will see it sync live${currentActorName ? ` as ${currentActorName}` : ''}.`
