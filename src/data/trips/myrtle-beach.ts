@@ -173,9 +173,24 @@ export const myrtleBeach: Trip = {
   ],
 
   people: [
-    { id: 'p-toni', name: 'Toni Montez', role: 'Organizer' },
-    { id: 'p-morgan', name: 'Morgan Montez', role: 'Wife' },
-    { id: 'p-tatum', name: 'Tatum Montez', role: 'Daughter · 18 months · lap infant' },
+    { id: 'p-toni', name: 'Toni Montez', role: 'Organizer', household_id: 'hh-montez', rsvp: 'going' },
+    { id: 'p-morgan', name: 'Morgan Montez', role: 'Wife', household_id: 'hh-montez', rsvp: 'going' },
+    { id: 'p-tatum', name: 'Tatum Montez', role: 'Daughter · 18 months · lap infant', household_id: 'hh-montez', rsvp: 'going' },
+  ],
+
+  households: [
+    {
+      id: 'hh-montez',
+      name: 'The Montez family',
+      primaryContactPersonId: 'p-toni',
+      notes: 'Flying in from DFW. Tatum is 18 months and this is her first flight.',
+    },
+    {
+      id: 'hh-morgan-family',
+      name: "Morgan's family",
+      expectedCount: 14,
+      notes: 'The rest of the group at the condo. Add names and RSVPs as they firm up. Around 16 to 17 of us total across both households.',
+    },
   ],
 
   contacts: [
