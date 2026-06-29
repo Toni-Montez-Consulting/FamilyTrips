@@ -6,8 +6,8 @@ import { useResolvedTrip, useTripWithOverride } from '../hooks/useTripOverrides'
 
 function TripRouteStatus({ status }: { status: 'loading' | 'error' }) {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center p-6">
-      <div className="max-w-sm rounded-3xl bg-white border border-slate-200 p-5 text-center shadow-sm space-y-3">
+    <div className="min-h-screen bg-paper text-ink flex items-center justify-center p-6">
+      <div className="max-w-sm rounded-[8px] bg-surface border border-rule p-5 text-center space-y-3">
         <p className="text-3xl" aria-hidden>
           {status === 'loading' ? '🧳' : '⚠️'}
         </p>
@@ -66,7 +66,7 @@ export default function Layout() {
 
   return (
     <TripContext.Provider value={trip}>
-      <div className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-900">
+      <div className="min-h-screen overflow-x-hidden bg-paper text-ink">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:px-3 focus:py-2 focus:rounded-md focus:border focus:border-slate-300"
@@ -76,7 +76,7 @@ export default function Layout() {
         <main id="main" className={`mx-auto w-full max-w-2xl px-5 pt-5 sm:px-6 ${isManageRoute ? 'pb-10' : 'pb-28'}`}>
           <Link
             to="/trips"
-            className="inline-flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900 mb-3"
+            className="inline-flex items-center gap-1 text-sm text-ink-soft hover:text-ink mb-3"
           >
             <span aria-hidden>←</span>
             <span>All trips</span>
@@ -85,17 +85,17 @@ export default function Layout() {
           {!isManageRoute && navIdx >= 0 && (prevPage || nextPage) && (
             <nav
               aria-label="Page navigation"
-              className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-4"
+              className="mt-8 flex items-center justify-between gap-3 border-t border-rule pt-4"
             >
               {prevPage ? (
-                <Link to={pageHref(prevPage.r)} className="text-sm text-slate-600 hover:text-slate-900">
+                <Link to={pageHref(prevPage.r)} className="text-sm text-ink-soft hover:text-ink">
                   ← {prevPage.l}
                 </Link>
               ) : (
                 <span />
               )}
               {nextPage ? (
-                <Link to={pageHref(nextPage.r)} className="text-sm text-slate-600 hover:text-slate-900">
+                <Link to={pageHref(nextPage.r)} className="text-sm text-ink-soft hover:text-ink">
                   {nextPage.l} →
                 </Link>
               ) : (
