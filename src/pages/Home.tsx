@@ -58,45 +58,45 @@ export default function Home() {
 
       {!trip.heroImage && (
         <div className="text-center space-y-1">
-          <h1 className="text-3xl font-bold">{trip.name}</h1>
-          <p className="text-slate-600 text-lg">📍 {trip.location}</p>
-          <p className="text-slate-500">{formatDateRange(trip.startDate, trip.endDate)}</p>
+          <h1 className="text-3xl font-semibold text-ink">{trip.name}</h1>
+          <p className="text-ink-soft text-lg">📍 {trip.location}</p>
+          <p className="text-ink-soft">{formatDateRange(trip.startDate, trip.endDate)}</p>
         </div>
       )}
 
-      <div className="rounded-3xl bg-blue-600 text-white p-6 text-center shadow-sm">
+      <div className="rounded-[8px] border border-rule border-l-4 border-l-live bg-surface p-6 text-center">
         {tripEnded ? (
-          <p className="text-3xl font-semibold">{isEvent ? 'Event wrapped 🎉' : 'Trip wrapped 🎉'}</p>
+          <p className="text-3xl font-semibold text-ink">{isEvent ? 'Event wrapped 🎉' : 'Trip wrapped 🎉'}</p>
         ) : tripStarted ? (
           <>
-            <p className="text-blue-100 text-sm uppercase tracking-wide">Happening now</p>
-            <p className="text-4xl font-bold mt-1">{isEvent ? 'It’s happening!' : 'We’re here!'}</p>
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-live">Happening now</p>
+            <p className="text-4xl font-semibold mt-1 text-ink">{isEvent ? 'It’s happening' : 'We’re here'}</p>
           </>
         ) : (
           <>
-            <p className="text-blue-100 text-sm uppercase tracking-wide">
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-ink-soft">
               {isEvent ? 'Event starts in' : 'Trip starts in'}
             </p>
-            <p className="text-6xl font-bold leading-none mt-2">{left}</p>
-            <p className="text-blue-100 mt-1">day{left === 1 ? '' : 's'}</p>
+            <p className="text-6xl font-semibold leading-none mt-2 text-live">{left}</p>
+            <p className="text-ink-soft mt-1">day{left === 1 ? '' : 's'}</p>
           </>
         )}
       </div>
 
       {today && (
-        <section className="rounded-3xl bg-white border border-slate-200 p-5 shadow-sm space-y-3">
+        <section className="rounded-[8px] bg-surface border border-rule p-5 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs uppercase tracking-wide text-slate-500">Today</p>
-              <h2 className="text-lg font-semibold">{today.title ?? formatLongDate(today.date)}</h2>
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">Today</p>
+              <h2 className="text-lg font-semibold text-ink">{today.title ?? formatLongDate(today.date)}</h2>
             </div>
             <CopyButton text={formatDay(today)} label="Copy today" />
           </div>
           <ul className="space-y-2">
             {today.items.map((item, i) => (
               <li key={i} className="flex gap-3">
-                {item.time && <span className="text-slate-500 font-mono text-sm w-20 shrink-0">{item.time}</span>}
-                <span className="text-slate-800">{item.title}</span>
+                {item.time && <span className="text-ink-soft font-mono text-sm w-20 shrink-0">{item.time}</span>}
+                <span className="text-ink">{item.title}</span>
               </li>
             ))}
           </ul>
@@ -108,14 +108,14 @@ export default function Home() {
           <Link
             key={q.to}
             to={`${basePath}/${q.to}`.replace(/\/+/g, '/')}
-            className="flex items-center gap-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm active:scale-[0.98] transition"
+            className="flex items-center gap-4 bg-surface border border-rule rounded-[8px] p-4 hover:border-live active:scale-[0.98] transition"
           >
             <span aria-hidden className="text-3xl">{q.icon}</span>
             <span className="flex-1 min-w-0">
-              <span className="block font-semibold text-slate-900">{q.label}</span>
-              <span className="block text-sm text-slate-500">{q.hint}</span>
+              <span className="block font-semibold text-ink">{q.label}</span>
+              <span className="block text-sm text-ink-soft">{q.hint}</span>
             </span>
-            <span aria-hidden className="text-slate-400 text-xl">›</span>
+            <span aria-hidden className="text-held text-xl">›</span>
           </Link>
         ))}
       </div>
@@ -131,7 +131,7 @@ export default function Home() {
       <div className="flex justify-center">
         <Link
           to={`${basePath}/manage`}
-          className="text-sm text-slate-400 underline-offset-4 hover:text-slate-600 hover:underline"
+          className="text-sm text-held underline-offset-4 hover:text-ink-soft hover:underline"
         >
           Edit this trip
         </Link>

@@ -33,7 +33,7 @@ export default function BottomNav({
   return (
     <nav
       aria-label="Primary"
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-slate-200"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur border-t border-rule"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <ul className="mx-auto flex max-w-2xl px-2">
@@ -46,7 +46,7 @@ export default function BottomNav({
                 end={item.end}
                 className={({ isActive }) =>
                   `flex flex-col items-center justify-center gap-1 px-1 py-2 min-h-[60px] text-[0.68rem] sm:text-xs font-medium transition-colors ${
-                    isActive ? 'text-blue-700' : 'text-slate-600'
+                    isActive ? 'text-live' : 'text-ink-soft'
                   }`
                 }
               >
