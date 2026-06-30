@@ -30,7 +30,18 @@ const publicAddressAllowlist = [
   /600\s+2nd\s+Ave\s+NE/i,
   /1\s+Dali\s+Blvd/i,
   /7\s+Rockaway\s+St/i,
+  // Myrtle Beach Villas 302 A — owner-approved public for the Myrtle trip (link-shared
+  // with family; codes deactivate after the stay). Approved by Toni 2026-06-30.
+  /704\s+S\s+Ocean\s+Blvd/i,
 ]
+
+// Entry/pool codes the owner INTENTIONALLY chose to show in-app for a specific trip
+// (link-shared with family only). Narrow + explicit, so the gate still catches any
+// OTHER accidental code/access leak. Approved by Toni 2026-06-30 (Myrtle).
+const ownerApprovedAccess = [/door code:\s*4485/i]
+function isApprovedAccess(line) {
+  return ownerApprovedAccess.some((pattern) => pattern.test(line))
+}
 
 const safeLinePatterns = [
   /\b911\b/,
@@ -95,7 +106,7 @@ export function scanText(text, file = '<inline>') {
       })
     }
 
-    if (accessPattern.test(trimmed)) {
+    if (accessPattern.test(trimmed) && !isApprovedAccess(trimmed)) {
       findings.push({
         file,
         line: index + 1,
