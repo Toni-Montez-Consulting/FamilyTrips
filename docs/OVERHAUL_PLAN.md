@@ -139,11 +139,12 @@ debounce + concurrency handling. This phase gets its own mini design doc + revie
 4 (consistency + polish so it all feels one piece) → 5 (editing, on top of the finished structure).
 Each phase is independently shippable and independently reviewable.
 
-## Open decisions to lock at the Phase 1 review
-- **Budget placement** — Home card + `/budget` (recommended) vs keep it a 6th tab.
-- **Tab labels** — "Plan" vs "Trip" vs "Itinerary"; "Prep" vs "Lists".
-- **Prep merge** — one tab with a To-do/To-pack toggle (recommended) vs keep them separate but cross-linked.
-- **`/checklist` + `/packing` redirects** — confirm we preserve old links.
+## Phase 1 decisions — LOCKED (Toni, this session)
+- **Prep merge** — LOCKED: merge Checklist + Packing into one **Prep** tab with a To-do / To-pack toggle.
+- **Budget** — LOCKED: **off the tab bar**, de-emphasized to a quiet Home link + `/budget`. Budget is
+  low priority; for Myrtle keep it light (general costs only; do **not** add who-paid detail).
+- **Tab labels** — LOCKED: Home · Plan · Stay · People · Prep (Plan = the itinerary; event kind: Place for Stay).
+- **Old links** — LOCKED: `/checklist` + `/packing` redirect into `/prep` (right segment preselected).
 
 ## Out of scope (named, not silently dropped)
 - ManageTrip full tokenization (owner-only, PIN-gated) — lower priority; revisit after Phase 5.
