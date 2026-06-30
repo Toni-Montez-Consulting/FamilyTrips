@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTrip } from '../context/tripContextCore'
 import Section from '../components/Section'
 import CopyButton from '../components/CopyButton'
 import EmptyState from '../components/EmptyState'
 import ActorPicker from '../components/ActorPicker'
+import PrepChipNav from '../components/PrepChipNav'
 import SyncStatusChip from '../components/SyncStatusChip'
+import { categorySlugs } from '../utils/slug'
 import { formatChecklist, formatTimeAgo } from '../utils/formatters'
 import type { ChecklistItem, Person } from '../types/trip'
 import { useChecklistState } from '../hooks/useChecklistState'
@@ -344,6 +346,90 @@ export function ChecklistView() {
   const pct = total ? Math.round((done / total) * 100) : 0
   const currentActorName = firstNameFor(trip.people, actorId)
 
+  // Collision-checked anchor ids for each category (Fail Loud: no silent dup ids).
+  const slugMap = useMemo(() => categorySlugs(grouped.map(([c]) => c)), [grouped])
+
+  // Per-category progress, derived from the same merged data as the page total.
+  const sections = useMemo(
+    () =>
+      grouped.map(([cat, list]) => {
+        const d = list.filter((i) => i.done).length
+        return {
+          cat,
+          list,
+          id: slugMap.get(cat)!,
+          done: d,
+          total: list.length,
+          fullyDone: list.length > 0 && d === list.length,
+        }
+      }),
+    [grouped, slugMap],
+  )
+
+  // Fail Loud: per-section sums must reconcile with the page total.
+  if (import.meta.env.DEV) {
+    const sum = sections.reduce((a, s) => a + s.done, 0)
+    if (sum !== done) {
+      console.error('Prep progress mismatch: per-section sum', sum, 'page', done)
+    }
+  }
+
+  // Auto-collapse is an INITIAL-SEED affordance only. We seed open-state once (on the
+  // first render that has sections) and never re-derive it on toggle — otherwise
+  // checking the last item in a section would yank it shut under the user's finger
+  // mid-task. A section the user (or a chip) opened stays open even if later completed;
+  // it only starts collapsed on a fresh load. Do not "fix" this into live collapse.
+  // Seeded during render (React's "adjust state while rendering" pattern, not an
+  // effect): when openMap is still null and sections have arrived, set it once. React
+  // re-renders immediately with no intermediate DOM paint, so panels never flash
+  // wide-open before collapsing, and the react-hooks set-state-in-effect rule stays
+  // satisfied. Toggling only ever calls setOpen; the seed branch never runs again.
+  const [openMap, setOpenMap] = useState<Record<string, boolean> | null>(null)
+  if (openMap === null && sections.length) {
+    // Default to a COLLAPSED directory (see PackingView): first paint is headers +
+    // counts + chip-nav; the user opens what they need, or "Expand all".
+    setOpenMap(Object.fromEntries(sections.map((s) => [s.id, false])))
+  }
+  const isOpen = (id: string) => openMap?.[id] ?? false
+  const setOpen = (id: string, next: boolean) =>
+    setOpenMap((m) => ({ ...(m ?? {}), [id]: next }))
+  const allOpen = sections.length > 0 && sections.every((s) => isOpen(s.id))
+  const setAllOpen = (next: boolean) =>
+    setOpenMap(Object.fromEntries(sections.map((s) => [s.id, next])))
+
+  // Active chip tracking via IntersectionObserver against the section anchors.
+  const [activeId, setActiveId] = useState<string | null>(null)
+  useEffect(() => {
+    const els = sections
+      .map((s) => document.getElementById(s.id))
+      .filter(Boolean) as HTMLElement[]
+    if (!els.length) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        const top = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0]
+        if (top) setActiveId(top.target.id)
+      },
+      { rootMargin: '-72px 0px -55% 0px', threshold: 0 },
+    )
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [sections])
+
+  // Chip jump: force the section open, scroll to it, then move focus to its toggle.
+  function jump(id: string) {
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    setOpen(id, true)
+    requestAnimationFrame(() => {
+      const el = document.getElementById(id)
+      el?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' })
+      el?.querySelector<HTMLElement>('button[aria-expanded]')?.focus?.()
+    })
+  }
+
   async function handleAddItem(input: AddItemInput): Promise<void> {
     const row = await addItem(input)
     if (row) setAdding(false)
@@ -415,21 +501,46 @@ export function ChecklistView() {
         />
       )}
 
-      {grouped.map(([cat, list]) => (
+      {sections.length > 1 && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => setAllOpen(!allOpen)}
+            className="min-h-11 px-2 font-mono text-xs uppercase tracking-[0.12em] text-ink-soft hover:text-ink"
+          >
+            {allOpen ? 'Collapse all' : 'Expand all'}
+          </button>
+        </div>
+      )}
+
+      {sections.length > 0 && (
+        <PrepChipNav
+          chips={sections.map((s) => ({ cat: s.cat, id: s.id, icon: CATEGORY_ICONS[s.cat] ?? '📝' }))}
+          activeId={activeId}
+          onJump={jump}
+        />
+      )}
+
+      {sections.map((s) => (
         <Section
-          key={cat}
-          title={cat}
-          icon={CATEGORY_ICONS[cat] ?? '📝'}
-          copyText={formatChecklist(list)}
+          key={s.id}
+          id={s.id}
+          title={s.cat}
+          icon={CATEGORY_ICONS[s.cat] ?? '📝'}
+          copyText={formatChecklist(s.list)}
           copyLabel="Copy section"
+          collapsible
+          open={isOpen(s.id)}
+          onOpenChange={(next) => setOpen(s.id, next)}
+          progress={{ done: s.done, total: s.total }}
         >
           <ul className="divide-y divide-rule">
-            {list.map((it) => {
+            {s.list.map((it) => {
               const actor = trip.people.find((p) => p.id === it.actorId)
               const actorFirstName = actor ? actor.name.split(' ')[0] : null
               const isEditing = editingId === it.id
               return (
-                <li key={it.id} className="py-3">
+                <li key={it.id} className={`py-3 -mx-5 px-5 ${it.done ? 'bg-paper' : ''}`}>
                   <div className="flex items-start gap-3">
                     <button
                       type="button"
@@ -439,8 +550,8 @@ export function ChecklistView() {
                       onClick={() => toggle(it.id, !it.done)}
                       className={`flex-shrink-0 mt-0.5 w-7 h-7 -m-0.5 p-0.5 rounded-full flex items-center justify-center text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-open active:scale-95 ${
                         it.done
-                          ? 'bg-open text-paper hover:bg-open'
-                          : 'bg-paper text-held border border-rule hover:bg-paper'
+                          ? 'bg-open text-paper border-2 border-open hover:bg-open'
+                          : 'bg-surface border-2 border-ink-soft hover:border-ink'
                       }`}
                     >
                       {it.done ? '✓' : ''}
