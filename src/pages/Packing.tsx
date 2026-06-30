@@ -30,7 +30,7 @@ type MergedPackingItem = PackingItem & {
   stateKey: string
 }
 
-export default function Packing() {
+export function PackingView() {
   const trip = useTrip()
   const isEvent = trip.kind === 'event'
   const { actorId } = useActor(trip.slug)
@@ -71,15 +71,14 @@ export default function Packing() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-3xl font-bold">{isEvent ? 'Supplies' : 'Packing'}</h1>
+      <div className="space-y-1">
         <p className="text-ink-soft">
           {isEvent ? 'What to bring' : 'What to bring'} — {packed} of {total} packed ({pct}%).
         </p>
         <p className="text-sm text-ink-soft">
           Tap any item as it goes in the bag. Supabase syncs when configured; otherwise changes stay in this browser session.
         </p>
-      </header>
+      </div>
 
       {total > 0 && (
         <div className="rounded-[8px] bg-surface border border-rule p-5 space-y-3">
@@ -164,6 +163,19 @@ export default function Packing() {
           />
         </div>
       )}
+    </div>
+  )
+}
+
+export default function Packing() {
+  const trip = useTrip()
+  const isEvent = trip.kind === 'event'
+  return (
+    <div className="space-y-6">
+      <header className="space-y-1">
+        <h1 className="text-3xl font-bold">{isEvent ? 'Supplies' : 'Packing'}</h1>
+      </header>
+      <PackingView />
     </div>
   )
 }

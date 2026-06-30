@@ -4,12 +4,10 @@ type Item = { to: string; label: string; icon: string; end?: boolean }
 
 const tripItems: Item[] = [
   { to: '', label: 'Home', icon: '🏠', end: true },
-  { to: 'trip', label: 'Trip', icon: '🗓️' },
+  { to: 'trip', label: 'Plan', icon: '🗓️' },
   { to: 'stay', label: 'Stay', icon: '🛏️' },
   { to: 'people', label: 'People', icon: '👪' },
-  { to: 'checklist', label: 'List', icon: '✅' },
-  { to: 'packing', label: 'Pack', icon: '🎒' },
-  { to: 'budget', label: 'Budget', icon: '💰' },
+  { to: 'prep', label: 'Prep', icon: '🎒' },
 ]
 
 const eventItems: Item[] = [
@@ -17,8 +15,7 @@ const eventItems: Item[] = [
   { to: 'trip', label: 'Plan', icon: '🗓️' },
   { to: 'stay', label: 'Place', icon: '📍' },
   { to: 'people', label: 'People', icon: '👪' },
-  { to: 'checklist', label: 'Tasks', icon: '✅' },
-  { to: 'budget', label: 'Budget', icon: '💰' },
+  { to: 'prep', label: 'Prep', icon: '🎒' },
 ]
 
 export default function BottomNav({

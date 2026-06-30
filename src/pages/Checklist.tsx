@@ -281,7 +281,7 @@ function EditItemForm({ item, categories, onSubmit, onCancel }: EditFormProps) {
   )
 }
 
-export default function Checklist() {
+export function ChecklistView() {
   const trip = useTrip()
   const isEvent = trip.kind === 'event'
   const { actorId, setActor } = useActor(trip.slug)
@@ -361,8 +361,7 @@ export default function Checklist() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-3xl font-bold">{isEvent ? 'Tasks' : 'Checklist'}</h1>
+      <div className="space-y-1">
         <p className="text-ink-soft">
           {isEvent ? 'Event prep' : 'Live trip prep'} — {done} of {total} done ({pct}%).
         </p>
@@ -376,7 +375,7 @@ export default function Checklist() {
             onSwitch={() => setShowPicker(true)}
           />
         )}
-      </header>
+      </div>
 
       {(showPicker || !actorId) && (
         <ActorPicker
@@ -535,6 +534,19 @@ export default function Checklist() {
           />
         </div>
       )}
+    </div>
+  )
+}
+
+export default function Checklist() {
+  const trip = useTrip()
+  const isEvent = trip.kind === 'event'
+  return (
+    <div className="space-y-6">
+      <header className="space-y-1">
+        <h1 className="text-3xl font-bold">{isEvent ? 'Tasks' : 'Checklist'}</h1>
+      </header>
+      <ChecklistView />
     </div>
   )
 }

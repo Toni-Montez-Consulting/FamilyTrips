@@ -25,7 +25,7 @@ export default function Trip() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-3xl font-bold">{isEvent ? 'Schedule' : 'Trip'}</h1>
+        <h1 className="text-3xl font-bold">{isEvent ? 'Schedule' : 'Plan'}</h1>
         <p className="text-ink-soft">
           {isEvent ? 'The plan for the gathering.' : 'Day-by-day plan and things to do.'}
         </p>

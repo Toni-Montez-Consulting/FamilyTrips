@@ -28,18 +28,14 @@ export default function Home() {
     ? [
         { to: 'trip', label: 'Schedule', icon: '🗓️', hint: 'Day-of plan' },
         ...(trip.food?.length ? [{ to: 'trip#food', label: 'Food', icon: '🍽️', hint: 'What we’re eating' }] : []),
-        ...(trip.supplies?.length ? [{ to: 'packing', label: 'Supplies', icon: '🎒', hint: 'What to bring' }] : []),
-        ...((trip.eventTasks?.length || trip.checklist.length) ? [{ to: 'checklist', label: 'Tasks', icon: '✅', hint: 'Setup, shopping, cleanup' }] : []),
+        { to: 'prep', label: 'Prep', icon: '🎒', hint: 'To-do + packing' },
         { to: 'people', label: 'People', icon: '👪', hint: 'Who’s coming' },
-        ...(trip.budget.length ? [{ to: 'budget', label: 'Budget', icon: '💰', hint: 'Casual costs' }] : []),
       ]
     : [
         { to: 'trip', label: 'Itinerary', icon: '🗓️', hint: 'Day-by-day plan' },
         { to: 'stay', label: 'Stay & Bookings', icon: '🛏️', hint: 'Address, Wi-Fi, flights' },
         { to: 'people', label: 'People', icon: '👪', hint: 'Who’s coming' },
-        { to: 'checklist', label: 'Checklist', icon: '✅', hint: 'What’s done, what’s not' },
-        { to: 'packing', label: 'Packing', icon: '🎒', hint: 'What to bring' },
-        { to: 'budget', label: 'Budget', icon: '💰', hint: 'Costs & per-person split' },
+        { to: 'prep', label: 'Prep', icon: '🎒', hint: 'To-do + packing' },
       ]
 
   return (
@@ -119,6 +115,17 @@ export default function Home() {
           </Link>
         ))}
       </div>
+
+      {(!isEvent || trip.budget.length > 0) && (
+        <Link
+          to={`${basePath}/budget`}
+          className="flex items-center gap-3 text-sm text-ink-soft hover:text-ink"
+        >
+          <span aria-hidden>💰</span>
+          <span className="flex-1">Budget</span>
+          <span aria-hidden className="text-held">›</span>
+        </Link>
+      )}
 
       <div className="flex justify-center pt-2">
         <CopyButton

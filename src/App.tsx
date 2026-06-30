@@ -7,9 +7,8 @@ const Home = lazy(() => import('./pages/Home'))
 const Trip = lazy(() => import('./pages/Trip'))
 const Stay = lazy(() => import('./pages/Stay'))
 const People = lazy(() => import('./pages/People'))
-const Checklist = lazy(() => import('./pages/Checklist'))
+const Prep = lazy(() => import('./pages/Prep'))
 const Budget = lazy(() => import('./pages/Budget'))
-const Packing = lazy(() => import('./pages/Packing'))
 const ManageTrip = lazy(() => import('./pages/ManageTrip'))
 const NewTrip = lazy(() => import('./pages/NewTrip'))
 const TripsIndex = lazy(() => import('./pages/TripsIndex'))
@@ -39,8 +38,9 @@ export default function App() {
             <Route path="trip" element={<Trip />} />
             <Route path="stay" element={<Stay />} />
             <Route path="people" element={<People />} />
-            <Route path="checklist" element={<Checklist />} />
-            <Route path="packing" element={<Packing />} />
+            <Route path="prep" element={<Prep />} />
+            <Route path="checklist" element={<Navigate to="../prep?list=todo" replace />} />
+            <Route path="packing" element={<Navigate to="../prep?list=pack" replace />} />
             <Route path="budget" element={<Budget />} />
             <Route path="manage" element={<ManageTrip />} />
           </Route>

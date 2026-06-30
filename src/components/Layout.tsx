@@ -50,12 +50,11 @@ export default function Layout() {
     trip.kind === 'event'
       ? [
           { r: '', l: 'Home' }, { r: 'trip', l: 'Plan' }, { r: 'stay', l: 'Place' },
-          { r: 'people', l: 'People' }, { r: 'checklist', l: 'Tasks' }, { r: 'budget', l: 'Budget' },
+          { r: 'people', l: 'People' }, { r: 'prep', l: 'Prep' },
         ]
       : [
-          { r: '', l: 'Home' }, { r: 'trip', l: 'Trip' }, { r: 'stay', l: 'Stay' },
-          { r: 'people', l: 'People' }, { r: 'checklist', l: 'Checklist' },
-          { r: 'packing', l: 'Packing' }, { r: 'budget', l: 'Budget' },
+          { r: '', l: 'Home' }, { r: 'trip', l: 'Plan' }, { r: 'stay', l: 'Stay' },
+          { r: 'people', l: 'People' }, { r: 'prep', l: 'Prep' },
         ]
   const cleanPath = location.pathname.replace(/\/+$/, '')
   const sub = cleanPath === basePath ? '' : cleanPath.slice(basePath.length + 1)
