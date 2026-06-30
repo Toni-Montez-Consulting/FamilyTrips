@@ -28,14 +28,14 @@ export default function Home() {
     ? [
         { to: 'trip', label: 'Schedule', icon: '🗓️', hint: 'Day-of plan' },
         ...(trip.food?.length ? [{ to: 'trip#food', label: 'Food', icon: '🍽️', hint: 'What we’re eating' }] : []),
-        { to: 'prep', label: 'Prep', icon: '🎒', hint: 'To-do + packing' },
+        { to: 'prep', label: 'Prep', icon: '🎒', hint: 'Just us — packing + to-dos' },
         { to: 'people', label: 'People', icon: '👪', hint: 'Who’s coming' },
       ]
     : [
         { to: 'trip', label: 'Itinerary', icon: '🗓️', hint: 'Day-by-day plan' },
         { to: 'stay', label: 'Stay & Bookings', icon: '🛏️', hint: 'Address, Wi-Fi, flights' },
         { to: 'people', label: 'People', icon: '👪', hint: 'Who’s coming' },
-        { to: 'prep', label: 'Prep', icon: '🎒', hint: 'To-do + packing' },
+        { to: 'prep', label: 'Prep', icon: '🎒', hint: 'Just us — packing + to-dos' },
       ]
 
   return (

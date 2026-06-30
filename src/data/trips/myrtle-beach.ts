@@ -21,15 +21,16 @@ export const myrtleBeach: Trip = {
 
   stay: {
     name: 'Myrtle Beach Villas 302 A (6-bedroom condo)',
-    address: 'Shared privately with the group',
-    checkIn: 'July 4, 2026 · 4:00 PM–8:30 PM',
+    address: '704 S Ocean Blvd, Myrtle Beach, SC',
+    checkIn: 'July 4, 2026 · self check-in from 4:00 PM',
     checkOut: 'July 7, 2026 · time per guidebook',
-    amenities: ['6 bedrooms — fits the full group', 'No pets', 'No smoking'],
+    amenities: ['6 bedrooms — fits the full group', 'Pool access', 'No pets', 'No smoking'],
     notes:
-      'Managed by MB Vacation Home Rentals · check-in window 4:00–8:30 PM.\n\n' +
-      'Entry, internet, parking, and checkout details live in the property guidebook, ' +
-      'shared privately with the group — kept off this public page on purpose. ' +
-      'Flight reservation confirmation is also stored privately.',
+      'Self check-in opens at 4:00 PM on Jul 4 — the keypad will not work before then, so do not arrive early. ' +
+      'When you get there, go straight up to the unit.\n\n' +
+      'Door code: 4485# (enter the digits, then press # to unlock, then turn the handle). The code activates at 4:00 PM.\n' +
+      'Pool code: 2012#.\n\n' +
+      'Flight reservation confirmation is stored privately.',
   },
 
   bookings: [
@@ -178,6 +179,12 @@ export const myrtleBeach: Trip = {
     { id: 'p-toni', name: 'Toni Montez', role: 'Organizer', household_id: 'hh-montez', rsvp: 'going' },
     { id: 'p-morgan', name: 'Morgan Montez', role: 'Wife', household_id: 'hh-montez', rsvp: 'going' },
     { id: 'p-tatum', name: 'Tatum Montez', role: 'Daughter · 18 months · lap infant', household_id: 'hh-montez', rsvp: 'going' },
+    { id: 'p-mark', name: 'Mark Goodwin', role: 'Father-in-law', household_id: 'hh-grandparents', rsvp: 'going' },
+    { id: 'p-laura', name: 'Laura Goodwin', role: 'Mother-in-law', household_id: 'hh-grandparents', rsvp: 'going' },
+    { id: 'p-madison', name: 'Madison Goodwin', role: 'Brother-in-law', household_id: 'hh-madison', rsvp: 'going' },
+    { id: 'p-kaitlyn', name: 'Kaitlyn Goodwin', role: 'Sister-in-law', household_id: 'hh-madison', rsvp: 'going' },
+    { id: 'p-makayla', name: 'Makayla Goodwin', role: 'Sister-in-law', household_id: 'hh-makayla', rsvp: 'going' },
+    { id: 'p-courtney', name: 'Courtney', role: "Makayla's partner", household_id: 'hh-makayla', rsvp: 'going' },
   ],
 
   households: [
@@ -188,10 +195,30 @@ export const myrtleBeach: Trip = {
       notes: 'Flying in from DFW. Tatum is 18 months and this is her first flight.',
     },
     {
-      id: 'hh-morgan-family',
-      name: "Morgan's family",
-      expectedCount: 14,
-      notes: 'The rest of the group at the condo. Add names and RSVPs as they firm up. Around 16 to 17 of us total across both households.',
+      id: 'hh-grandparents',
+      name: 'Mark & Laura Goodwin',
+      primaryContactPersonId: 'p-mark',
+      notes: 'Grandma and Grandpa.',
+    },
+    {
+      id: 'hh-madison',
+      name: "Madison & Kaitlyn's family",
+      primaryContactPersonId: 'p-madison',
+      expectedCount: 2,
+      notes: 'Plus their two boys.',
+    },
+    {
+      id: 'hh-makayla',
+      name: "Makayla & Courtney's family",
+      primaryContactPersonId: 'p-makayla',
+      expectedCount: 1,
+      notes: 'Plus their daughter.',
+    },
+    {
+      id: 'hh-kids',
+      name: 'Nieces & nephews',
+      expectedCount: 3,
+      notes: 'One girl and two boys joining the group.',
     },
   ],
 
