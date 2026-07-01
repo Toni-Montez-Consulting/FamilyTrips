@@ -67,11 +67,11 @@ export const myrtleBeach: Trip = {
     {
       id: 'stay-pending',
       kind: 'stay',
-      title: 'Airbnb — Myrtle Beach (pending)',
+      title: 'Myrtle Beach Villas 302 A (booked)',
       details:
-        'Listing, exact address, check-in/out, and cost pending. Exact address kept private (group chat only) once known.',
+        '6-bedroom condo. Self check-in from 4:00 PM. Full address and entry details are on the Stay tab above.',
       when: '2026-07-04',
-      status: 'needs-confirmation',
+      status: 'confirmed',
     },
     {
       id: 'ground-transport',
@@ -126,8 +126,8 @@ export const myrtleBeach: Trip = {
           notes: 'Grab the stroller at the jet bridge; pick up the car seat at baggage claim. Add an AirTag if you have one.',
         },
         {
-          title: 'Head to the Airbnb · low-key dinner',
-          address: 'Airbnb address shared privately with the group',
+          title: 'Head to the condo · low-key dinner',
+          address: '704 S Ocean Blvd, Myrtle Beach, SC',
           notes: 'Grocery/essentials run if needed. Early night — long travel day for everyone.',
         },
       ],
@@ -434,7 +434,7 @@ export const myrtleBeach: Trip = {
 
   budget: [
     { id: 'b-flights', name: 'Flights (AA — already booked)', total: 0, splitCount: 2, status: 'tbd', notes: 'Enter the actual fare once handy. Confirmation stored privately.' },
-    { id: 'b-stay', name: 'Airbnb (pending)', total: 0, splitCount: 2, status: 'tbd', notes: 'Add total once the Airbnb is confirmed.' },
+    { id: 'b-stay', name: 'Condo (302A)', total: 0, splitCount: 2, status: 'tbd', notes: 'Handled separately.' },
     { id: 'b-transport', name: 'Ground transport in MYR (estimate)', total: 0, splitCount: 2, status: 'tbd', notes: 'Rental car vs rideshare TBD.' },
     { id: 'b-groceries', name: 'Groceries / food (estimate)', total: 200, splitCount: 2, status: 'estimate', notes: 'Placeholder — tune once meals are planned.' },
   ],
