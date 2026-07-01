@@ -6,9 +6,9 @@ import { formatBooking, formatStay, mapsLink } from '../utils/formatters'
 
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4 py-2 border-b border-slate-100 last:border-0">
-      <span className="text-sm text-slate-500 sm:w-32 shrink-0">{label}</span>
-      <span className="text-slate-900 break-words">{children}</span>
+    <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4 py-2 border-b border-rule last:border-0">
+      <span className="text-sm text-ink-soft sm:w-32 shrink-0">{label}</span>
+      <span className="text-ink break-words">{children}</span>
     </div>
   )
 }
@@ -22,7 +22,7 @@ export default function Stay() {
     <div className="space-y-6">
       <header className="space-y-1">
         <h1 className="text-3xl font-bold">{isEvent ? 'Location & Details' : 'Stay & Bookings'}</h1>
-        <p className="text-slate-600">
+        <p className="text-ink-soft">
           {isEvent ? 'Where it is, when it starts, and any reservations.' : 'Where we’re staying and every reservation in one place.'}
         </p>
       </header>
@@ -39,7 +39,7 @@ export default function Stay() {
             href={mapsLink(stay.address)}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-700 underline underline-offset-2"
+            className="text-live underline underline-offset-2"
           >
             {stay.address}
           </a>
@@ -48,7 +48,7 @@ export default function Stay() {
         <InfoRow label={isEvent ? 'Ends' : 'Check-out'}>{stay.checkOut}</InfoRow>
         {stay.wifiSsid && (
           <InfoRow label="Wi-Fi">
-            <span className="font-mono bg-slate-100 rounded px-2 py-0.5 inline-block">
+            <span className="font-mono bg-paper border border-rule rounded px-2 py-0.5 inline-block">
               {stay.wifiSsid}
               {stay.wifiPassword ? ` / ${stay.wifiPassword}` : ''}
             </span>
@@ -60,7 +60,7 @@ export default function Stay() {
             {stay.hostPhone && (
               <>
                 {' · '}
-                <a href={`tel:${stay.hostPhone.replace(/\s+/g, '')}`} className="text-blue-700 underline underline-offset-2">
+                <a href={`tel:${stay.hostPhone.replace(/\s+/g, '')}`} className="text-live underline underline-offset-2">
                   {stay.hostPhone}
                 </a>
               </>
@@ -74,15 +74,16 @@ export default function Stay() {
               href={stay.bookingLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-700 underline underline-offset-2 break-all"
+              className="text-live underline underline-offset-2 break-all"
             >
               View reservation →
             </a>
           </InfoRow>
         )}
         {stay.notes && (
-          <div className="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 p-3 text-sm">
-            {stay.notes}
+          <div className="mt-4 rounded-[8px] border border-rule border-l-4 border-l-live bg-surface p-4">
+            <p className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-live mb-2">Getting in</p>
+            <p className="text-sm text-ink whitespace-pre-line leading-relaxed">{stay.notes}</p>
           </div>
         )}
       </Section>
@@ -91,8 +92,8 @@ export default function Stay() {
         <Section title="Amenities" icon="✨">
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {stay.amenities.map((a) => (
-              <li key={a} className="flex items-center gap-2 text-slate-800">
-                <span aria-hidden className="text-green-600">✓</span>
+              <li key={a} className="flex items-center gap-2 text-ink">
+                <span aria-hidden className="text-open">✓</span>
                 {a}
               </li>
             ))}
@@ -116,18 +117,18 @@ export default function Stay() {
               b.kind === 'stay' ? '🏠' :
               b.kind === 'activity' ? '🎟️' : '📌'
             return (
-              <li key={b.id} className="rounded-2xl border border-slate-200 p-4">
+              <li key={b.id} className="rounded-[8px] border border-rule p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-semibold text-slate-900 flex items-center gap-2">
+                    <p className="font-semibold text-ink flex items-center gap-2">
                       <span aria-hidden className="text-2xl">{icon}</span>
                       <span>{b.title}</span>
                     </p>
-                    {b.details && <p className="text-sm text-slate-700 mt-1">{b.details}</p>}
+                    {b.details && <p className="text-sm text-ink-soft mt-1">{b.details}</p>}
                     {b.confirmation && (
-                      <p className="text-sm text-slate-600 mt-1">
+                      <p className="text-sm text-ink-soft mt-1">
                         Confirmation:{' '}
-                        <span className="font-mono bg-slate-100 rounded px-2 py-0.5">{b.confirmation}</span>
+                        <span className="font-mono bg-paper border border-rule rounded px-2 py-0.5">{b.confirmation}</span>
                       </p>
                     )}
                     {b.link && (
@@ -135,7 +136,7 @@ export default function Stay() {
                         href={b.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block mt-2 text-blue-700 underline underline-offset-2 break-all text-sm"
+                        className="inline-block mt-2 text-live underline underline-offset-2 break-all text-sm"
                       >
                         Open reservation →
                       </a>
@@ -151,7 +152,7 @@ export default function Stay() {
 
       {trip.map?.embedUrl && (
         <Section title="Map" icon="🗺️">
-          <div className="aspect-video rounded-xl overflow-hidden border border-slate-200">
+          <div className="aspect-video rounded-[8px] overflow-hidden border border-rule">
             <iframe
               title="Trip map"
               src={trip.map.embedUrl}
