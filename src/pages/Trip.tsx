@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTrip } from '../context/tripContextCore'
 import Section from '../components/Section'
 import CopyButton from '../components/CopyButton'
@@ -9,11 +10,21 @@ import {
   formatItinerary,
   formatLongDate,
   mapsLink,
+  todayLocalISO,
 } from '../utils/formatters'
 
 function StatusPill({ value }: { value?: string }) {
   if (!value) return null
-  return <span className="rounded-full bg-paper px-2 py-0.5 text-xs font-medium text-ink-soft">{value}</span>
+  const attention = value === 'needs-booking' || value === 'needs-confirmation'
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+        attention ? 'border border-live bg-surface text-live' : 'bg-paper text-ink-soft'
+      }`}
+    >
+      {value}
+    </span>
+  )
 }
 
 export default function Trip() {
@@ -21,6 +32,18 @@ export default function Trip() {
   const isEvent = trip.kind === 'event'
   const scheduleLabel = isEvent ? 'Schedule' : 'Itinerary'
   const thingsLabel = isEvent ? 'Ideas' : 'Things to do'
+
+  // Collapse the itinerary to the day that matters: today during the trip, else the
+  // first day. Seeded once (async-safe), then it's purely user-controlled.
+  const today = todayLocalISO()
+  const primaryDay = trip.itinerary.some((d) => d.date === today) ? today : trip.itinerary[0]?.date
+  const [openDays, setOpenDays] = useState<Record<string, boolean> | null>(null)
+  if (openDays === null && trip.itinerary.length) {
+    setOpenDays(Object.fromEntries(trip.itinerary.map((d) => [d.date, d.date === primaryDay])))
+  }
+  const isDayOpen = (date: string) => openDays?.[date] ?? date === primaryDay
+  const toggleDay = (date: string) =>
+    setOpenDays((m) => ({ ...(m ?? {}), [date]: !(m?.[date] ?? date === primaryDay) }))
 
   return (
     <div className="space-y-6">
@@ -65,62 +88,84 @@ export default function Trip() {
               {trip.planner.warnings[0]}
             </div>
           ) : null}
-          {trip.itinerary.map((day) => (
-            <article key={day.date} className="rounded-[8px] border border-rule overflow-hidden">
-              <header className="flex items-center justify-between gap-3 px-4 py-3 bg-paper">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-ink-soft">{formatLongDate(day.date)}</p>
-                  {day.title && <h3 className="font-semibold text-ink">{day.title}</h3>}
-                </div>
-                <CopyButton text={formatDay(day)} label="Copy day" />
-              </header>
-              <ul className="divide-y divide-rule">
-                {day.items.map((item, i) => (
-                  <li key={i} className={`px-4 py-3 flex gap-4 ${item.open ? 'bg-paper' : ''}`}>
-                    {item.time && <span className="text-ink-soft font-mono text-sm w-20 shrink-0">{item.time}</span>}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-ink">
-                        {item.anchor && (
-                          <span className="mr-2 rounded-full bg-surface border border-live px-2 py-0.5 text-xs font-semibold text-live align-middle">
-                            Anchor
-                          </span>
-                        )}
-                        {item.title}
-                      </p>
-                      {item.open ? (
-                        <p className="text-sm text-ink-soft mt-1">Kept open on purpose — leave room to breathe.</p>
-                      ) : (
-                        <StatusPill value={item.status} />
-                      )}
-                      {item.address && (
-                        <a
-                          href={mapsLink(item.address)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-live underline decoration-rule underline-offset-2 break-words"
-                        >
-                          {item.address}
-                        </a>
-                      )}
-                      {item.notes && <p className="text-sm text-ink-soft mt-1">{item.notes}</p>}
-                      {item.why && <p className="text-xs text-ink-soft mt-1">Why: {item.why}</p>}
-                      {item.nextStep && <p className="text-xs text-ink-soft mt-1">Next: {item.nextStep}</p>}
-                      {item.link && (
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-live underline underline-offset-2 break-all"
-                        >
-                          {item.link}
-                        </a>
-                      )}
+          {trip.itinerary.map((day) => {
+            const open = isDayOpen(day.date)
+            return (
+              <article key={day.date} className="rounded-[8px] border border-rule overflow-hidden">
+                <div className="flex items-stretch bg-paper">
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    onClick={() => toggleDay(day.date)}
+                    className="flex flex-1 items-center justify-between gap-3 px-4 py-3 text-left min-h-11"
+                  >
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-ink-soft">{formatLongDate(day.date)}</p>
+                      {day.title && <h3 className="font-semibold text-ink">{day.title}</h3>}
                     </div>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
+                    <span className="flex items-center gap-2 text-ink-soft shrink-0">
+                      {!open && (
+                        <span className="font-mono text-xs">
+                          {day.items.length} {day.items.length === 1 ? 'item' : 'items'}
+                        </span>
+                      )}
+                      <span aria-hidden className={`text-lg leading-none transition-transform ${open ? 'rotate-90' : ''}`}>›</span>
+                    </span>
+                  </button>
+                  <div className="flex items-center pr-3">
+                    <CopyButton text={formatDay(day)} label="Copy day" />
+                  </div>
+                </div>
+                {open && (
+                  <ul className="divide-y divide-rule border-t border-rule">
+                    {day.items.map((item, i) => (
+                      <li key={i} className={`px-4 py-3 flex gap-4 ${item.open ? 'bg-paper' : ''}`}>
+                        {item.time && <span className="text-ink-soft font-mono text-sm w-20 shrink-0">{item.time}</span>}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-ink">
+                            {item.anchor && (
+                              <span className="mr-2 rounded-full bg-surface border border-live px-2 py-0.5 text-xs font-semibold text-live align-middle">
+                                Anchor
+                              </span>
+                            )}
+                            {item.title}
+                          </p>
+                          {item.open ? (
+                            <p className="text-sm text-ink-soft mt-1">Kept open on purpose — leave room to breathe.</p>
+                          ) : (
+                            <StatusPill value={item.status} />
+                          )}
+                          {item.address && (
+                            <a
+                              href={mapsLink(item.address)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-sm text-live underline decoration-rule underline-offset-2 break-words"
+                            >
+                              {item.address}
+                            </a>
+                          )}
+                          {item.notes && <p className="text-sm text-ink-soft mt-1">{item.notes}</p>}
+                          {item.why && <p className="text-xs text-ink-soft mt-1">Why: {item.why}</p>}
+                          {item.nextStep && <p className="text-xs text-ink-soft mt-1">Next: {item.nextStep}</p>}
+                          {item.link && (
+                            <a
+                              href={item.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-sm text-live underline underline-offset-2 break-all"
+                            >
+                              {item.link}
+                            </a>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </article>
+            )
+          })}
         </div>
       </Section>
 
