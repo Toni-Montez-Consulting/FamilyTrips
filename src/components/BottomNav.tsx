@@ -1,21 +1,22 @@
 import { NavLink } from 'react-router-dom'
+import { Home, CalendarDays, BedDouble, MapPin, Users, ListChecks, type LucideIcon } from 'lucide-react'
 
-type Item = { to: string; label: string; icon: string; end?: boolean }
+type Item = { to: string; label: string; icon: LucideIcon; end?: boolean }
 
 const tripItems: Item[] = [
-  { to: '', label: 'Home', icon: '🏠', end: true },
-  { to: 'trip', label: 'Plan', icon: '🗓️' },
-  { to: 'stay', label: 'Stay', icon: '🛏️' },
-  { to: 'people', label: 'People', icon: '👪' },
-  { to: 'prep', label: 'Prep', icon: '🎒' },
+  { to: '', label: 'Home', icon: Home, end: true },
+  { to: 'trip', label: 'Plan', icon: CalendarDays },
+  { to: 'stay', label: 'Stay', icon: BedDouble },
+  { to: 'people', label: 'People', icon: Users },
+  { to: 'prep', label: 'Prep', icon: ListChecks },
 ]
 
 const eventItems: Item[] = [
-  { to: '', label: 'Home', icon: '🏠', end: true },
-  { to: 'trip', label: 'Plan', icon: '🗓️' },
-  { to: 'stay', label: 'Place', icon: '📍' },
-  { to: 'people', label: 'People', icon: '👪' },
-  { to: 'prep', label: 'Prep', icon: '🎒' },
+  { to: '', label: 'Home', icon: Home, end: true },
+  { to: 'trip', label: 'Plan', icon: CalendarDays },
+  { to: 'stay', label: 'Place', icon: MapPin },
+  { to: 'people', label: 'People', icon: Users },
+  { to: 'prep', label: 'Prep', icon: ListChecks },
 ]
 
 export default function BottomNav({
@@ -36,6 +37,7 @@ export default function BottomNav({
       <ul className="mx-auto flex max-w-2xl px-2">
         {items.map((item) => {
           const to = item.to ? `${basePath}/${item.to}`.replace(/\/+/g, '/') : basePath || '/'
+          const Icon = item.icon
           return (
             <li key={item.label} className="flex-1">
               <NavLink
@@ -47,7 +49,7 @@ export default function BottomNav({
                   }`
                 }
               >
-                <span aria-hidden className="text-xl sm:text-2xl leading-none">{item.icon}</span>
+                <Icon aria-hidden size={22} strokeWidth={2} className="shrink-0" />
                 <span>{item.label}</span>
               </NavLink>
             </li>

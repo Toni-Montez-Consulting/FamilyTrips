@@ -1,4 +1,14 @@
 import { Link } from 'react-router-dom'
+import {
+  CalendarDays,
+  BedDouble,
+  Users,
+  ListChecks,
+  UtensilsCrossed,
+  Wallet,
+  ChevronRight,
+  type LucideIcon,
+} from 'lucide-react'
 import { useTrip } from '../context/tripContextCore'
 import CopyButton from '../components/CopyButton'
 import {
@@ -24,24 +34,24 @@ export default function Home() {
   const tripEnded = daysUntil(trip.endDate) < 0
   const today = todaysDay(trip)
 
-  const quickLinks: { to: string; label: string; icon: string; hint: string }[] = isEvent
+  const quickLinks: { to: string; label: string; icon: LucideIcon; hint: string }[] = isEvent
     ? [
-        { to: 'trip', label: 'Schedule', icon: '🗓️', hint: 'Day-of plan' },
-        ...(trip.food?.length ? [{ to: 'trip#food', label: 'Food', icon: '🍽️', hint: 'What we’re eating' }] : []),
-        { to: 'prep', label: 'Prep', icon: '🎒', hint: 'Just us — packing + to-dos' },
-        { to: 'people', label: 'People', icon: '👪', hint: 'Who’s coming' },
+        { to: 'trip', label: 'Schedule', icon: CalendarDays, hint: 'Day-of plan' },
+        ...(trip.food?.length ? [{ to: 'trip#food', label: 'Food', icon: UtensilsCrossed, hint: 'What we’re eating' }] : []),
+        { to: 'prep', label: 'Prep', icon: ListChecks, hint: 'Just us — packing + to-dos' },
+        { to: 'people', label: 'People', icon: Users, hint: 'Who’s coming' },
       ]
     : [
-        { to: 'trip', label: 'Itinerary', icon: '🗓️', hint: 'Day-by-day plan' },
-        { to: 'stay', label: 'Stay & Bookings', icon: '🛏️', hint: 'Address, Wi-Fi, flights' },
-        { to: 'people', label: 'People', icon: '👪', hint: 'Who’s coming' },
-        { to: 'prep', label: 'Prep', icon: '🎒', hint: 'Just us — packing + to-dos' },
+        { to: 'trip', label: 'Itinerary', icon: CalendarDays, hint: 'Day-by-day plan' },
+        { to: 'stay', label: 'Stay & Bookings', icon: BedDouble, hint: 'Address, codes, flights' },
+        { to: 'people', label: 'People', icon: Users, hint: 'Who’s coming' },
+        { to: 'prep', label: 'Prep', icon: ListChecks, hint: 'Just us — packing + to-dos' },
       ]
 
   return (
     <div className="space-y-6">
       {trip.heroImage && (
-        <div className="relative rounded-3xl overflow-hidden shadow-sm border border-slate-200">
+        <div className="relative rounded-[8px] overflow-hidden border border-rule">
           <img src={trip.heroImage} alt="" className="w-full h-48 object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
@@ -100,20 +110,25 @@ export default function Home() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {quickLinks.map((q) => (
-          <Link
-            key={q.to}
-            to={`${basePath}/${q.to}`.replace(/\/+/g, '/')}
-            className="flex items-center gap-4 bg-surface border border-rule rounded-[8px] p-4 hover:border-live active:scale-[0.98] transition"
-          >
-            <span aria-hidden className="text-3xl">{q.icon}</span>
-            <span className="flex-1 min-w-0">
-              <span className="block font-semibold text-ink">{q.label}</span>
-              <span className="block text-sm text-ink-soft">{q.hint}</span>
-            </span>
-            <span aria-hidden className="text-held text-xl">›</span>
-          </Link>
-        ))}
+        {quickLinks.map((q) => {
+          const Icon = q.icon
+          return (
+            <Link
+              key={q.to}
+              to={`${basePath}/${q.to}`.replace(/\/+/g, '/')}
+              className="flex items-center gap-4 bg-surface border border-rule rounded-[8px] p-4 hover:border-live active:scale-[0.98] transition"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-paper text-ink-soft">
+                <Icon aria-hidden size={20} strokeWidth={2} />
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block font-semibold text-ink">{q.label}</span>
+                <span className="block text-sm text-ink-soft">{q.hint}</span>
+              </span>
+              <ChevronRight aria-hidden size={18} className="text-held shrink-0" />
+            </Link>
+          )
+        })}
       </div>
 
       {(!isEvent || trip.budget.length > 0) && (
@@ -121,9 +136,9 @@ export default function Home() {
           to={`${basePath}/budget`}
           className="flex items-center gap-3 text-sm text-ink-soft hover:text-ink"
         >
-          <span aria-hidden>💰</span>
+          <Wallet aria-hidden size={16} className="shrink-0" />
           <span className="flex-1">Budget</span>
-          <span aria-hidden className="text-held">›</span>
+          <ChevronRight aria-hidden size={16} className="text-held shrink-0" />
         </Link>
       )}
 
