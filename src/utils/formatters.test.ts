@@ -24,8 +24,11 @@ describe('trip visibility and sorting', () => {
 
     const trips = listTripsSorted()
 
-    expect(trips.map((trip) => trip.slug)).toEqual(['okc', 'myrtle-beach', 'stpete'])
+    // myrtle-beach is intentionally unlisted (direct-link only), so it is absent
+    // from the public /trips index even though it is an upcoming trip.
+    expect(trips.map((trip) => trip.slug)).toEqual(['okc', 'stpete'])
     expect(trips.some((trip) => trip.slug === 'logan-bachelor')).toBe(false)
+    expect(trips.some((trip) => trip.slug === 'myrtle-beach')).toBe(false)
   })
 })
 

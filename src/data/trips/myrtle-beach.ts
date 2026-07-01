@@ -2,19 +2,19 @@ import type { Trip } from '../../types/trip'
 
 const heroImage = new URL('../../assets/hero.png', import.meta.url).href
 
-// Myrtle Beach, July 4–7, 2026. Toni + Morgan + Tatum (18 months).
-// Listed (deliberate): featured on the home page and in /trips so the family opens
-// it from the app, plus shared via the /myrtle-beach link. With no auth yet (P2),
-// "unlisted" would only add obscurity, so real privacy for the names/dates is a P2 item.
-// Privacy convention (same as stpete): the reservation PNR and exact addresses are
-// kept OUT of this public seed. Anything written here ships in the public JS bundle.
+// Myrtle Beach, July 4–7, 2026. Toni + Morgan + Tatum + the Goodwins.
+// UNLISTED (deliberate): reachable via the /myrtle-beach direct link Toni texts family,
+// but OFF the public /trips index and not auto-featured on the home page. Chosen because
+// the door/pool codes, address, and full family roster are intentionally shown in-app
+// (link-shared with family only) — so keep it off the public browse surfaces.
+// Note: those codes/address are owner-approved public via the privacy-scan allowlist.
 export const myrtleBeach: Trip = {
   slug: 'myrtle-beach',
   name: 'Myrtle Beach Family Trip',
   location: 'Myrtle Beach, SC',
   startDate: '2026-07-04',
   endDate: '2026-07-07',
-  visibility: 'listed',
+  visibility: 'unlisted',
   heroImage,
   currency: '$',
   tagline: 'Toddler-mode beach long weekend with Tatum',
