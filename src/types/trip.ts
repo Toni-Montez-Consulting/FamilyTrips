@@ -261,6 +261,8 @@ export type TravelSegment = {
   note?: string
 }
 
+export type FaqItem = { q: string; a: string }
+
 export type Trip = {
   slug: string
   kind?: PlanKind
@@ -279,6 +281,7 @@ export type Trip = {
   people: Person[]
   households?: Household[]
   travelPlan?: TravelSegment[]
+  faq?: FaqItem[]
   contacts: Contact[]
   checklist: ChecklistItem[]
   packing?: PackingItem[]

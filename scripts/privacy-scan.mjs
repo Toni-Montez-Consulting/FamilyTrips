@@ -33,14 +33,22 @@ const publicAddressAllowlist = [
   // Myrtle Beach Villas 302 A — owner-approved public for the Myrtle trip (link-shared
   // with family; codes deactivate after the stay). Approved by Toni 2026-06-30.
   /704\s+S\s+Ocean\s+Blvd/i,
+  // Nearest pediatric urgent care (a public business) — for the family FAQ + contacts.
+  /235\s+Village\s+Center\s+Blvd/i,
 ]
 
 // Entry/pool codes the owner INTENTIONALLY chose to show in-app for a specific trip
 // (link-shared with family only). Narrow + explicit, so the gate still catches any
 // OTHER accidental code/access leak. Approved by Toni 2026-06-30 (Myrtle).
-const ownerApprovedAccess = [/door code:\s*4485/i]
+const ownerApprovedAccess = [/door code[:\s]*4485/i]
 function isApprovedAccess(line) {
   return ownerApprovedAccess.some((pattern) => pattern.test(line))
+}
+
+// Public business phone numbers the owner intentionally included (urgent care, ER).
+const publicPhoneAllowlist = [/843\D{0,4}626\D{0,4}2273/, /843\D{0,4}488\D{0,4}7337/]
+function isPublicPhone(line) {
+  return publicPhoneAllowlist.some((pattern) => pattern.test(line))
 }
 
 const safeLinePatterns = [
@@ -88,7 +96,7 @@ export function scanText(text, file = '<inline>') {
     const trimmed = line.trim()
     if (!trimmed || isSafeLine(trimmed)) return
 
-    if (phonePattern.test(trimmed)) {
+    if (phonePattern.test(trimmed) && !isPublicPhone(trimmed)) {
       findings.push({
         file,
         line: index + 1,

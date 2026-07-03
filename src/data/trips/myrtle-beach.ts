@@ -289,13 +289,46 @@ export const myrtleBeach: Trip = {
     },
   ],
 
+  faq: [
+    {
+      q: 'Where are we staying?',
+      a: 'Myrtle Beach Villas 302 A, a 6-bedroom condo at 704 S Ocean Blvd, Myrtle Beach, SC. Full details are on the Stay tab.',
+    },
+    {
+      q: 'How do we get into the condo?',
+      a: 'Self check-in starts at 4:00 PM (the keypad will not work before then). Door code 4485# — enter the digits, then press #, then turn the handle. Head straight up to the unit. Pool code is 2012#.',
+    },
+    {
+      q: 'When do Toni, Morgan and Tatum get there?',
+      a: 'They land at MYR around 4:30 PM on Saturday, July 4, and family is picking them up. Everyone else, drop your arrival time in the group chat so we can plan the pickups.',
+    },
+    {
+      q: "Who's coming?",
+      a: 'The Montez family (Toni, Morgan, Tatum) plus the Goodwins: Mark and Laura; Madison and Kaitlyn with their two boys; Makayla and Courtney with their daughter; and a few nieces and nephews. Around 15 of us. Full roster is on the People tab.',
+    },
+    {
+      q: 'What should I bring?',
+      a: 'The condo stocks the basics only, so bring coffee and filters, laundry detergent, extra paper towels and toilet paper, trash bags, and your own beach towels, chairs, and toys. See the Condo 302A list on the Prep tab.',
+    },
+    {
+      q: 'Checkout and house rules?',
+      a: 'Checkout time is per the property guidebook. No pets, no smoking. Pool access is included.',
+    },
+    {
+      q: 'Where do we go if someone gets sick or hurt?',
+      a: 'Call 911 for an emergency. For the kids, the closest walk-in is CareNow Urgent Care on N Kings Hwy (treats 3 months and up, open 7 days), or Kid Care Pediatric Urgent Care. The nearest ER is Grand Strand Medical Center. All the numbers are on the People tab.',
+    },
+  ],
+
   contacts: [
     { id: 'c-emerg', label: 'Emergency (US)', value: '911', kind: 'phone' },
     { id: 'c-aa', label: 'American Airlines', value: 'https://www.aa.com/', kind: 'url', notes: 'App for boarding passes; reservation confirmation stored privately.' },
     { id: 'c-aa-children', label: 'AA — traveling with children', value: 'https://www.aa.com/i18n/travel-info/special-assistance/traveling-children.jsp', kind: 'url', notes: 'Lap-infant, stroller, and car seat rules.' },
     { id: 'c-tsa-kids', label: 'TSA — traveling with children', value: 'https://www.tsa.gov/travel/tsa-cares/traveling-children', kind: 'url', notes: 'Toddler liquids/food rules — declare and separate at screening.' },
     { id: 'c-myr', label: 'Myrtle Beach International Airport (MYR)', value: 'https://www.flymyrtlebeach.com/', kind: 'url' },
-    { id: 'c-host', label: 'Airbnb host', value: 'Pending — store privately once booked', kind: 'text' },
+    { id: 'c-carenow', label: 'CareNow Urgent Care (kids 3mo+)', value: '(843) 626-2273', kind: 'phone', notes: '2510 N Kings Hwy, Myrtle Beach — walk-in, open 7 days. About 2 miles from the condo.' },
+    { id: 'c-kidcare', label: 'Kid Care Pediatric Urgent Care', value: '(843) 488-7337', kind: 'phone', notes: '235 Village Center Blvd — pediatric only (birth to 21). Mon–Fri 10a–8p, Sat/Sun 8a–12p.' },
+    { id: 'c-er', label: 'Nearest ER — Grand Strand Medical Center', value: 'Call 911 for emergencies', kind: 'text', notes: 'Full emergency room (HCA), 82nd Parkway, Myrtle Beach.' },
   ],
 
   checklist: [

@@ -9,6 +9,7 @@ const Stay = lazy(() => import('./pages/Stay'))
 const People = lazy(() => import('./pages/People'))
 const Prep = lazy(() => import('./pages/Prep'))
 const TravelDay = lazy(() => import('./pages/TravelDay'))
+const Faq = lazy(() => import('./pages/Faq'))
 const Budget = lazy(() => import('./pages/Budget'))
 const ManageTrip = lazy(() => import('./pages/ManageTrip'))
 const NewTrip = lazy(() => import('./pages/NewTrip'))
@@ -41,6 +42,7 @@ export default function App() {
             <Route path="people" element={<People />} />
             <Route path="prep" element={<Prep />} />
             <Route path="travel" element={<TravelDay />} />
+            <Route path="faq" element={<Faq />} />
             <Route path="checklist" element={<Navigate to="../prep?list=todo" replace />} />
             <Route path="packing" element={<Navigate to="../prep?list=pack" replace />} />
             <Route path="budget" element={<Budget />} />
