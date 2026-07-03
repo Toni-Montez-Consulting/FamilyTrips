@@ -12,6 +12,11 @@ import {
   mapsLink,
   todayLocalISO,
 } from '../utils/formatters'
+import InlineText from '../components/InlineText'
+import InlineAddRow from '../components/InlineAddRow'
+import OwnerUnlockControl from '../components/OwnerUnlockControl'
+import { useOwnerEdit } from '../context/ownerEditCore'
+import { addItineraryItem, removeItineraryItem, updateItineraryItem } from '../utils/inlineEdit'
 
 function StatusPill({ value }: { value?: string }) {
   if (!value) return null
@@ -32,6 +37,12 @@ export default function Trip() {
   const isEvent = trip.kind === 'event'
   const scheduleLabel = isEvent ? 'Schedule' : 'Itinerary'
   const thingsLabel = isEvent ? 'Ideas' : 'Things to do'
+  const { unlocked, saveField } = useOwnerEdit()
+
+  async function handleRemoveItem(dayDate: string, index: number, title: string) {
+    if (!window.confirm(`Remove "${title}"?`)) return
+    await saveField(removeItineraryItem(trip, dayDate, index))
+  }
 
   // Collapse the itinerary to the day that matters: today during the trip, else the
   // first day. Seeded once (async-safe), then it's purely user-controlled.
@@ -47,11 +58,14 @@ export default function Trip() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-1">
-        <h1 className="text-3xl font-bold">{isEvent ? 'Schedule' : 'Plan'}</h1>
-        <p className="text-ink-soft">
-          {isEvent ? 'The plan for the gathering.' : 'Day-by-day plan and things to do.'}
-        </p>
+      <header className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold">{isEvent ? 'Schedule' : 'Plan'}</h1>
+          <p className="text-ink-soft">
+            {isEvent ? 'The plan for the gathering.' : 'Day-by-day plan and things to do.'}
+          </p>
+        </div>
+        <OwnerUnlockControl className="shrink-0 mt-1" />
       </header>
 
       <nav aria-label="On this page" className="flex gap-2 overflow-x-auto -mx-1 px-1 pb-1">
@@ -117,10 +131,24 @@ export default function Trip() {
                   </div>
                 </div>
                 {open && (
+                  <>
                   <ul className="divide-y divide-rule border-t border-rule">
                     {day.items.map((item, i) => (
                       <li key={i} className={`px-4 py-3 flex gap-4 ${item.open ? 'bg-paper' : ''}`}>
-                        {item.time && <span className="text-ink-soft font-mono text-sm w-20 shrink-0">{item.time}</span>}
+                        {unlocked ? (
+                          <span className="text-ink-soft font-mono text-sm w-20 shrink-0">
+                            <InlineText
+                              value={item.time ?? ''}
+                              onSave={(t) => saveField(updateItineraryItem(trip, day.date, i, { time: t || undefined }))}
+                              label="Start time"
+                              allowEmpty
+                              emptyText="+ time"
+                              placeholder="9:00 AM"
+                            />
+                          </span>
+                        ) : (
+                          item.time && <span className="text-ink-soft font-mono text-sm w-20 shrink-0">{item.time}</span>
+                        )}
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-ink">
                             {item.anchor && (
@@ -128,7 +156,11 @@ export default function Trip() {
                                 Anchor
                               </span>
                             )}
-                            {item.title}
+                            <InlineText
+                              value={item.title}
+                              onSave={(t) => saveField(updateItineraryItem(trip, day.date, i, { title: t }))}
+                              label="Item title"
+                            />
                           </p>
                           {item.open ? (
                             <p className="text-sm text-ink-soft mt-1">Kept open on purpose — leave room to breathe.</p>
@@ -145,7 +177,20 @@ export default function Trip() {
                               {item.address}
                             </a>
                           )}
-                          {item.notes && <p className="text-sm text-ink-soft mt-1">{item.notes}</p>}
+                          {unlocked ? (
+                            <p className="text-sm text-ink-soft mt-1">
+                              <InlineText
+                                value={item.notes ?? ''}
+                                onSave={(t) => saveField(updateItineraryItem(trip, day.date, i, { notes: t || undefined }))}
+                                label="Notes"
+                                multiline
+                                allowEmpty
+                                emptyText="+ notes"
+                              />
+                            </p>
+                          ) : (
+                            item.notes && <p className="text-sm text-ink-soft mt-1">{item.notes}</p>
+                          )}
                           {item.why && <p className="text-xs text-ink-soft mt-1">Why: {item.why}</p>}
                           {item.nextStep && <p className="text-xs text-ink-soft mt-1">Next: {item.nextStep}</p>}
                           {item.link && (
@@ -159,9 +204,26 @@ export default function Trip() {
                             </a>
                           )}
                         </div>
+                        {unlocked && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem(day.date, i, item.title)}
+                            aria-label={`Remove "${item.title}"`}
+                            className="flex-shrink-0 min-h-9 px-1 text-sm text-ink-soft hover:text-live"
+                          >
+                            ✕
+                          </button>
+                        )}
                       </li>
                     ))}
                   </ul>
+                  <InlineAddRow
+                    label={`Add item to ${formatLongDate(day.date)}`}
+                    addLabel="+ Add to this day"
+                    onAdd={(t) => saveField(addItineraryItem(trip, day.date, { title: t }))}
+                    className="px-4 py-3 border-t border-rule"
+                  />
+                  </>
                 )}
               </article>
             )
