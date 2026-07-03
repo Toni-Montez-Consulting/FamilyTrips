@@ -6,6 +6,7 @@ import {
   ListChecks,
   UtensilsCrossed,
   Wallet,
+  HelpCircle,
   ChevronRight,
   type LucideIcon,
 } from 'lucide-react'
@@ -141,6 +142,17 @@ export default function Home() {
           <ChevronRight aria-hidden size={16} className="text-held shrink-0" />
         </Link>
       )}
+
+      {trip.faq?.length ? (
+        <Link
+          to={`${basePath}/faq`}
+          className="flex items-center gap-3 text-sm text-ink-soft hover:text-ink"
+        >
+          <HelpCircle aria-hidden size={16} className="shrink-0" />
+          <span className="flex-1">Family FAQ</span>
+          <ChevronRight aria-hidden size={16} className="text-held shrink-0" />
+        </Link>
+      ) : null}
 
       <div className="flex justify-center pt-2">
         <CopyButton
