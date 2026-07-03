@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { Home, CalendarDays, BedDouble, MapPin, Users, ListChecks, type LucideIcon } from 'lucide-react'
+import { Home, CalendarDays, BedDouble, MapPin, Users, ListChecks, Plane, type LucideIcon } from 'lucide-react'
 
 type Item = { to: string; label: string; icon: LucideIcon; end?: boolean }
 
 const tripItems: Item[] = [
   { to: '', label: 'Home', icon: Home, end: true },
+  { to: 'travel', label: 'Travel', icon: Plane },
   { to: 'trip', label: 'Plan', icon: CalendarDays },
   { to: 'stay', label: 'Stay', icon: BedDouble },
   { to: 'people', label: 'People', icon: Users },

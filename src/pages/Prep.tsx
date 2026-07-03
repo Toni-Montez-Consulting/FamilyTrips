@@ -25,7 +25,7 @@ export default function Prep() {
       <header className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-3xl font-bold">Prep</h1>
-          <span className="rounded-full border border-live px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-live">
+          <span className="rounded-full bg-live px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-surface">
             Just us
           </span>
         </div>
