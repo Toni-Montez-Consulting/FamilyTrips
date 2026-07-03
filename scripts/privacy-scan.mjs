@@ -41,14 +41,19 @@ const publicAddressAllowlist = [
 // (link-shared with family only). Narrow + explicit, so the gate still catches any
 // OTHER accidental code/access leak. Approved by Toni 2026-06-30 (Myrtle).
 const ownerApprovedAccess = [/door code[:\s]*4485/i]
-function isApprovedAccess(line) {
-  return ownerApprovedAccess.some((pattern) => pattern.test(line))
-}
 
 // Public business phone numbers the owner intentionally included (urgent care, ER).
 const publicPhoneAllowlist = [/843\D{0,4}626\D{0,4}2273/, /843\D{0,4}488\D{0,4}7337/]
-function isPublicPhone(line) {
-  return publicPhoneAllowlist.some((pattern) => pattern.test(line))
+
+// Remove owner-approved allowlisted substrings from a line BEFORE running a detector, so an
+// allowlisted value (a public phone, the approved door code, a public clinic address) can never
+// carry a DIFFERENT sensitive value that happens to share the same line past the gate. Keying the
+// pass on the specific match instead of the whole line keeps the gate fail-loud on real leaks.
+function redactAllowlisted(line, patterns) {
+  return patterns.reduce(
+    (acc, pattern) => acc.replace(new RegExp(pattern.source, pattern.flags.replace('g', '') + 'g'), ' [allowed] '),
+    line,
+  )
 }
 
 const safeLinePatterns = [
@@ -84,10 +89,6 @@ function isSafeLine(line) {
   return safeLinePatterns.some((pattern) => pattern.test(line))
 }
 
-function isPublicAddress(line) {
-  return publicAddressAllowlist.some((pattern) => pattern.test(line))
-}
-
 export function scanText(text, file = '<inline>') {
   const findings = []
   const lines = text.split(/\r?\n/g)
@@ -96,7 +97,7 @@ export function scanText(text, file = '<inline>') {
     const trimmed = line.trim()
     if (!trimmed || isSafeLine(trimmed)) return
 
-    if (phonePattern.test(trimmed) && !isPublicPhone(trimmed)) {
+    if (phonePattern.test(redactAllowlisted(trimmed, publicPhoneAllowlist))) {
       findings.push({
         file,
         line: index + 1,
@@ -114,7 +115,7 @@ export function scanText(text, file = '<inline>') {
       })
     }
 
-    if (accessPattern.test(trimmed) && !isApprovedAccess(trimmed)) {
+    if (accessPattern.test(redactAllowlisted(trimmed, ownerApprovedAccess))) {
       findings.push({
         file,
         line: index + 1,
@@ -132,7 +133,7 @@ export function scanText(text, file = '<inline>') {
       })
     }
 
-    if (exactAddressPattern.test(trimmed) && !isPublicAddress(trimmed)) {
+    if (exactAddressPattern.test(redactAllowlisted(trimmed, publicAddressAllowlist))) {
       findings.push({
         file,
         line: index + 1,
@@ -176,6 +177,14 @@ function runSelfTests() {
       name: 'room assignment',
       text: "notes: 'Bedroom 2 — Leah + Tony'",
       rule: 'rooming',
+    },
+    {
+      // Regression guard for the allowlist-semantic-escape: an allowlisted public number on the
+      // same line must NOT grant a co-located private number a pass. Redaction removes only the
+      // public match, so the private number still trips the phone rule.
+      name: 'private phone co-located with an allowlisted public phone',
+      text: "notes: 'CareNow (843) 626-2273, back line for us is 555-867-5309'",
+      rule: 'phone',
     },
   ]
 
