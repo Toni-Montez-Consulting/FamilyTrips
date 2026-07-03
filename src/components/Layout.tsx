@@ -53,7 +53,7 @@ export default function Layout() {
           { r: 'people', l: 'People' }, { r: 'prep', l: 'Prep' },
         ]
       : [
-          { r: '', l: 'Home' }, { r: 'trip', l: 'Plan' }, { r: 'stay', l: 'Stay' },
+          { r: '', l: 'Home' }, { r: 'travel', l: 'Travel' }, { r: 'trip', l: 'Plan' }, { r: 'stay', l: 'Stay' },
           { r: 'people', l: 'People' }, { r: 'prep', l: 'Prep' },
         ]
   const cleanPath = location.pathname.replace(/\/+$/, '')

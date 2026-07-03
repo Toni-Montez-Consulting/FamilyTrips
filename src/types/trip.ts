@@ -237,6 +237,30 @@ export type BudgetItem = PlannerExplained & {
   notes?: string
 }
 
+// A "run of the day" for a travel day — the minute-by-minute plus the pre-departure
+// checklist and what rides in the cabin. Powers the Travel Day page.
+export type TravelStep = {
+  time?: string
+  title: string
+  detail?: string
+}
+
+export type TravelChecklistItem = {
+  id: string
+  text: string
+}
+
+export type TravelSegment = {
+  id: string
+  label: string
+  date: string
+  route?: string
+  runOfShow: TravelStep[]
+  beforeYouLeave?: TravelChecklistItem[]
+  carrying?: string[]
+  note?: string
+}
+
 export type Trip = {
   slug: string
   kind?: PlanKind
@@ -254,6 +278,7 @@ export type Trip = {
   thingsToDo: Activity[]
   people: Person[]
   households?: Household[]
+  travelPlan?: TravelSegment[]
   contacts: Contact[]
   checklist: ChecklistItem[]
   packing?: PackingItem[]
