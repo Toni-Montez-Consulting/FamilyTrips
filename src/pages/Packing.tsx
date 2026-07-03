@@ -10,6 +10,11 @@ import { formatPackingList } from '../utils/formatters'
 import { packingStateKey, suppliesStateKey } from '../utils/packing'
 import { useChecklistState } from '../hooks/useChecklistState'
 import { useActor } from '../hooks/useActor'
+import InlineText from '../components/InlineText'
+import InlineAddRow from '../components/InlineAddRow'
+import OwnerUnlockControl from '../components/OwnerUnlockControl'
+import { useOwnerEdit } from '../context/ownerEditCore'
+import { addPackingItem, removePackingItem, updatePackingItem, type PackingSource } from '../utils/inlineEdit'
 import type { PackingItem } from '../types/trip'
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -37,6 +42,13 @@ export function PackingView() {
   const isEvent = trip.kind === 'event'
   const { actorId } = useActor(trip.slug)
   const { dbRows, status, toggle } = useChecklistState(trip.slug, actorId)
+  const { unlocked, saveField } = useOwnerEdit()
+  const addSource: PackingSource = isEvent ? 'supplies' : 'packing'
+
+  async function handleRemovePacking(id: string, title: string) {
+    if (!window.confirm(`Remove "${title}"?`)) return
+    await saveField(removePackingItem(trip, id))
+  }
 
   const items = useMemo<MergedPackingItem[]>(
     () => {
@@ -158,13 +170,16 @@ export function PackingView() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
-        <p className="text-ink-soft">
-          {isEvent ? 'What to bring' : 'What to bring'} — {packed} of {total} packed ({pct}%).
-        </p>
-        <p className="text-sm text-ink-soft">
-          Tap any item as it goes in the bag. Supabase syncs when configured; otherwise changes stay in this browser session.
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <p className="text-ink-soft">
+            What to bring — {packed} of {total} packed ({pct}%).
+          </p>
+          <p className="text-sm text-ink-soft">
+            Tap any item as it goes in the bag. Supabase syncs when configured; otherwise changes stay in this browser session.
+          </p>
+        </div>
+        <OwnerUnlockControl className="shrink-0" />
       </div>
 
       {total > 0 && (
@@ -246,7 +261,11 @@ export function PackingView() {
                   </button>
                   <div className="min-w-0 flex-1">
                     <p className={item.packed ? 'text-ink-soft line-through' : 'text-ink'}>
-                      {item.title}
+                      <InlineText
+                        value={item.title}
+                        onSave={(t) => saveField(updatePackingItem(trip, item.id, { title: t }))}
+                        label="Item name"
+                      />
                       {item.quantity && (
                         <span className="text-sm text-ink-soft"> · {item.quantity}</span>
                       )}
@@ -259,10 +278,26 @@ export function PackingView() {
                       </p>
                     )}
                   </div>
+                  {unlocked && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemovePacking(item.id, item.title)}
+                      aria-label={`Remove "${item.title}"`}
+                      className="flex-shrink-0 min-h-9 px-1 text-sm text-ink-soft hover:text-live"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               </li>
             ))}
           </ul>
+          <InlineAddRow
+            label={`Add item to ${s.cat}`}
+            addLabel="+ Add to this list"
+            onAdd={(t) => saveField(addPackingItem(trip, s.cat, t, addSource))}
+            className="mt-3"
+          />
         </Section>
       ))}
 

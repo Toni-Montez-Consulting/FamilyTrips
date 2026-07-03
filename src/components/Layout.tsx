@@ -2,6 +2,7 @@ import { Link, Navigate, Outlet, useLocation, useParams } from 'react-router-dom
 import BottomNav from './BottomNav'
 import { trips } from '../data/trips'
 import { TripContext } from '../context/tripContextCore'
+import { OwnerEditProvider } from '../context/ownerEdit'
 import { useResolvedTrip, useTripWithOverride } from '../hooks/useTripOverrides'
 
 function TripRouteStatus({ status }: { status: 'loading' | 'error' }) {
@@ -46,6 +47,11 @@ export default function Layout() {
   const basePath = `/${trip.slug}`
   const isManageRoute = location.pathname.replace(/\/+$/, '').endsWith('/manage')
 
+  // Only seed trips are override-backed today, so inline editing is scoped to them.
+  const canEdit = Boolean(seedTrip)
+  const editVersion = seedTrip ? staticResult.row?.version : undefined
+  const editRefresh = seedTrip ? staticResult.refresh : async () => {}
+
   const navOrder =
     trip.kind === 'event'
       ? [
@@ -65,6 +71,7 @@ export default function Layout() {
 
   return (
     <TripContext.Provider value={trip}>
+      <OwnerEditProvider trip={trip} canEdit={canEdit} version={editVersion} refresh={editRefresh}>
       <div className="min-h-screen overflow-x-hidden bg-paper text-ink">
         <a
           href="#main"
@@ -105,6 +112,7 @@ export default function Layout() {
         </main>
         {!isManageRoute && <BottomNav basePath={basePath} kind={trip.kind} />}
       </div>
+      </OwnerEditProvider>
     </TripContext.Provider>
   )
 }
