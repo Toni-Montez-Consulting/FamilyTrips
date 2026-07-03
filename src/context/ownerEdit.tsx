@@ -93,18 +93,27 @@ export function OwnerEditProvider({ trip, canEdit, version, refresh, children }:
         updatedBy: 'owner',
         baseVersion,
       })
-      setSaving(false)
       if (!result.ok) {
         // Fail loud: surface, re-read to resync, and throw so the field reverts.
+        setSaving(false)
         setError(result.error || 'Could not save. Reverted.')
         void refresh()
         throw new Error(result.error || 'Save failed.')
       }
       if (result.row) setSavedVersion(result.row.version)
-      // Broadcast so Layout re-reads and the merged trip flows back down through context.
+      // Broadcast so other open tabs re-read.
       window.dispatchEvent(
         new CustomEvent('familytrips:trip-overrides-changed', { detail: { tripSlug: trip.slug } }),
       )
+      // Re-read the fresh trip BEFORE releasing the save lock so the next edit builds on
+      // up-to-date data. With edit triggers gated on `saving`, this serializes an owner's
+      // rapid multi-field edits and prevents a stale-snapshot clobber.
+      try {
+        await refresh()
+      } catch {
+        // Already persisted server-side; local state syncs on the next change event.
+      }
+      setSaving(false)
     },
     [unlocked, trip, pin, version, savedVersion, refresh],
   )

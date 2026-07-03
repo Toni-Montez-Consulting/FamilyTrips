@@ -19,7 +19,7 @@ export default function InlineAddRow({
   onAdd,
   className = '',
 }: Props) {
-  const { enabled, unlocked } = useOwnerEdit()
+  const { enabled, unlocked, saving: ownerSaving } = useOwnerEdit()
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
   const [saving, setSaving] = useState(false)
@@ -50,7 +50,8 @@ export default function InlineAddRow({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`min-h-9 text-sm text-live hover:underline underline-offset-4 ${className}`}
+        disabled={ownerSaving}
+        className={`min-h-9 text-sm text-live hover:underline underline-offset-4 disabled:opacity-50 ${className}`}
       >
         {addLabel}
       </button>

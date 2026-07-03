@@ -37,11 +37,15 @@ export default function Trip() {
   const isEvent = trip.kind === 'event'
   const scheduleLabel = isEvent ? 'Schedule' : 'Itinerary'
   const thingsLabel = isEvent ? 'Ideas' : 'Things to do'
-  const { unlocked, saveField } = useOwnerEdit()
+  const { unlocked, saving, saveField } = useOwnerEdit()
 
   async function handleRemoveItem(dayDate: string, index: number, title: string) {
     if (!window.confirm(`Remove "${title}"?`)) return
-    await saveField(removeItineraryItem(trip, dayDate, index))
+    try {
+      await saveField(removeItineraryItem(trip, dayDate, index))
+    } catch {
+      // saveField already surfaced the error + reverted; nothing to do here.
+    }
   }
 
   // Collapse the itinerary to the day that matters: today during the trip, else the
@@ -134,7 +138,7 @@ export default function Trip() {
                   <>
                   <ul className="divide-y divide-rule border-t border-rule">
                     {day.items.map((item, i) => (
-                      <li key={i} className={`px-4 py-3 flex gap-4 ${item.open ? 'bg-paper' : ''}`}>
+                      <li key={`${day.date}-${i}`} className={`px-4 py-3 flex gap-4 ${item.open ? 'bg-paper' : ''}`}>
                         {unlocked ? (
                           <span className="text-ink-soft font-mono text-sm w-20 shrink-0">
                             <InlineText
@@ -208,8 +212,9 @@ export default function Trip() {
                           <button
                             type="button"
                             onClick={() => handleRemoveItem(day.date, i, item.title)}
+                            disabled={saving}
                             aria-label={`Remove "${item.title}"`}
-                            className="flex-shrink-0 min-h-9 px-1 text-sm text-ink-soft hover:text-live"
+                            className="flex-shrink-0 min-h-9 px-1 text-sm text-ink-soft hover:text-live disabled:opacity-50"
                           >
                             ✕
                           </button>

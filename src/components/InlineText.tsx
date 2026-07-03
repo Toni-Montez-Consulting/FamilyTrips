@@ -29,7 +29,7 @@ export default function InlineText({
   className = '',
   emptyText = 'Add…',
 }: Props) {
-  const { enabled, unlocked } = useOwnerEdit()
+  const { enabled, unlocked, saving } = useOwnerEdit()
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
   const [optimistic, setOptimistic] = useOptimistic(value)
@@ -144,6 +144,7 @@ export default function InlineText({
         ref={triggerRef}
         type="button"
         onClick={begin}
+        disabled={saving}
         aria-label={`Edit ${label}`}
         aria-describedby={error ? errorId : undefined}
         className={`text-left rounded underline decoration-dotted decoration-rule underline-offset-4 hover:decoration-live focus:outline-none focus-visible:ring-2 focus-visible:ring-live ${

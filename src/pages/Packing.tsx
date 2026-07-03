@@ -42,12 +42,16 @@ export function PackingView() {
   const isEvent = trip.kind === 'event'
   const { actorId } = useActor(trip.slug)
   const { dbRows, status, toggle } = useChecklistState(trip.slug, actorId)
-  const { unlocked, saveField } = useOwnerEdit()
+  const { unlocked, saving, saveField } = useOwnerEdit()
   const addSource: PackingSource = isEvent ? 'supplies' : 'packing'
 
   async function handleRemovePacking(id: string, title: string) {
     if (!window.confirm(`Remove "${title}"?`)) return
-    await saveField(removePackingItem(trip, id))
+    try {
+      await saveField(removePackingItem(trip, id))
+    } catch {
+      // saveField already surfaced the error + reverted; nothing to do here.
+    }
   }
 
   const items = useMemo<MergedPackingItem[]>(
@@ -282,8 +286,9 @@ export function PackingView() {
                     <button
                       type="button"
                       onClick={() => handleRemovePacking(item.id, item.title)}
+                      disabled={saving}
                       aria-label={`Remove "${item.title}"`}
-                      className="flex-shrink-0 min-h-9 px-1 text-sm text-ink-soft hover:text-live"
+                      className="flex-shrink-0 min-h-9 px-1 text-sm text-ink-soft hover:text-live disabled:opacity-50"
                     >
                       ✕
                     </button>
