@@ -25,7 +25,15 @@ function validUrl(value) {
 }
 
 function validPhone(value) {
-  return value === '911' || /^\+?[0-9][0-9\s().-]{6,}$/.test(value)
+  if (value === '911') return true
+  // Validate by digit count rather than by leading character. The previous pattern was
+  // /^\+?[0-9][0-9\s().-]{6,}$/, which required the first character after an optional "+" to be a
+  // digit — so any parenthesised area code like "(843) 626-2273" failed and broke the build.
+  // Counting digits is both correct for that case and stricter than the old pattern, which
+  // accepted arbitrarily long runs such as "1234567890123456789".
+  if (!/^[+0-9\s().-]+$/.test(value)) return false
+  const digits = value.replace(/\D/g, '')
+  return digits.length >= 7 && digits.length <= 15
 }
 
 for (const file of files) {
